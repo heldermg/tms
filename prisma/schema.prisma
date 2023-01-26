@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator pothos {
+  provider = "prisma-pothos-types"
+}
+
+enum Profile {
+  ADMIN
+  MANAGER
+  TEAM_MEMBER
+}
+
+model User {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  name         String
+  email        String   @unique
+  image        String?
+  profile      Profile  @default(TEAM_MEMBER)
+  roles        Role[]
+  teamsManaged Team[]   @relation(name: "TeamManager")
+  team         Team?    @relation(name: "TeamMembers", fields: [teamId], references: [id])
+  teamId       String?
+}
+
+model Team {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  members   User[]   @relation(name: "TeamMembers")
+  manager   User     @relation(name: "TeamManager", fields: [managerId], references: [id])
+  managerId String
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  acronym     String
+  description String
+  users       User[]
+}
