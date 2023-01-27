@@ -1,5 +1,6 @@
 // graphql/schema.ts
-import "./types/Link"
+import "./types/Role"
+import "./types/Team"
 import "./types/User"
 import { builder } from "./builder";
 

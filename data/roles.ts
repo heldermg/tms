@@ -23,4 +23,10 @@ export const roles = [
     description: "Devops",
     acronym: "Devops",
   },
+  {
+    id: "31f1ab98-980d-4e0e-b936-2c0b9885292f",
+    name: "Manager",
+    description: "Manager",
+    acronym: "Mgr",
+  },
 ]

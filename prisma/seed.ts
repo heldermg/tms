@@ -9,22 +9,48 @@ async function main() {
     data: roles
   })
 
+  const managerRole = await prisma.role.findUnique({
+    where: {
+      acronym: 'Mgr'
+    }
+  })
+
   await prisma.user.createMany({
     data: users,
   })
 
-  await prisma.team.create({
+  const userCreated = await prisma.user.findUnique({
+    where: {
+      email: 'helder.gomes@serpro.gov.br'
+    }
+  })
+
+  const teamCreated = await prisma.team.create({
     data: {
       ...teams[0],
       manager: {
         connectOrCreate: {
           where: {
-            email: users[0].email,
+            id: userCreated!.id,
           },
-          create: users[0]
+          create: userCreated!
         },
       }
     },
+  })
+
+  await prisma.user.update({
+    where: {
+      id: userCreated!.id
+    },
+    data: {
+      teamId: teamCreated.id,
+      roles: {
+        connect: {
+          id: managerRole!.id
+        }
+      }
+    }
   })
 }
 

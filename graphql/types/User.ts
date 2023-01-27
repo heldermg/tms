@@ -4,13 +4,27 @@ import { builder } from "../builder";
 builder.prismaObject('User', {
   fields: (t) => ({
     id: t.exposeID('id'),
-    email: t.exposeString('email', { nullable: true, }),
+    name: t.exposeString('name'),
+    email: t.exposeString('email'),
     image: t.exposeString('image', { nullable: true, }),
-    role: t.expose('role', { type: Role, }),
-    bookmarks: t.relation('bookmarks', {}),
+    profile: t.expose('profile', { type: Profile, }),
+    roles: t.relation('roles'),
+    teamsManaged: t.relation('teamsManaged'),
+    team: t.relation('team'),
+    teamId: t.exposeString('teamId', { nullable: true, }),
+
   })
 })
 
-const Role = builder.enumType('Role', {
-  values: ['USER', 'ADMIN'] as const,
+const Profile = builder.enumType('Profile', {
+  values: ['ADMIN', 'MANAGER', 'TEAM_MEMBER'] as const,
 })
+
+builder.queryField('users', (t) =>  
+  t.prismaConnection({
+    type: 'User',
+    cursor: 'id',
+    resolve: (query, _parent, _args, _ctx, _info) =>
+      prisma.user.findMany({ ...query })
+  })
+)

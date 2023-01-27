@@ -1,23 +1,21 @@
 // /graphql/types/Link.ts
 import { builder } from "../builder";
 
-builder.prismaObject('Link', {
+builder.prismaObject('Role', {
   fields: (t) => ({
     id: t.exposeID('id'),
-    title: t.exposeString('title'),
-    url: t.exposeString('url'),
+    name: t.exposeString('name'),
+    acronym: t.exposeString('acronym'),
     description: t.exposeString('description'),
-    imageUrl: t.exposeString('imageUrl'),
-    category: t.exposeString('category'),
     users: t.relation('users')
   }),
 })
 
-builder.queryField('links', (t) =>  
+builder.queryField('roles', (t) =>  
   t.prismaConnection({
-    type: 'Link',
+    type: 'Role',
     cursor: 'id',
     resolve: (query, _parent, _args, _ctx, _info) =>
-      prisma.link.findMany({ ...query })
+      prisma.role.findMany({ ...query })
   })
 )

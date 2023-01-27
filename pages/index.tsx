@@ -1,12 +1,12 @@
 // /pages/index.tsx
 import Head from "next/head";
 import { gql, useQuery, useMutation } from "@apollo/client";
-import { AwesomeLink } from "../components/AwesomeLink";
-import type { Link } from "@prisma/client";
+import { RoleDetail } from "../components/RoleDetail";
+import type { Role } from "@prisma/client";
 
-const AllLinksQuery = gql`
-  query allLinksQuery($first: Int, $after: ID) {
-    links(first: $first, after: $after) {
+const AllRolesQuery = gql`
+  query allRolesQuery($first: Int, $after: ID) {
+    roles(first: $first, after: $after) {
       pageInfo {
         endCursor
         hasNextPage
@@ -14,12 +14,10 @@ const AllLinksQuery = gql`
       edges {
         cursor
         node {
-          imageUrl
-          url
-          title
-          category
-          description
           id
+          name
+          acronym
+          description
         }
       }
     }
@@ -27,7 +25,7 @@ const AllLinksQuery = gql`
 `;
 
 function Home() {
-  const { data, loading, error, fetchMore } = useQuery(AllLinksQuery, {
+  const { data, loading, error, fetchMore } = useQuery(AllRolesQuery, {
     variables: { first: 2 },
   });
 
@@ -35,25 +33,23 @@ function Home() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Oh no... {error.message}</p>;
 
-  const { endCursor, hasNextPage } = data.links.pageInfo;
+  const { endCursor, hasNextPage } = data.roles.pageInfo;
 
   return (
     <div>
       <Head>
-        <title>Awesome Links</title>
+        <title>Roles</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="container mx-auto max-w-5xl my-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {data?.links.edges.map(({ node }: { node: Link }) => (
-            <AwesomeLink
+          {data?.roles.edges.map(({ node }: { node: Role }) => (
+            <RoleDetail
               key={node.id}
-              title={node.title}
-              category={node.category}
-              url={node.url}
               id={node.id}
+              name={node.name}
+              acronym={node.acronym}
               description={node.description}
-              imageUrl={node.imageUrl}
             />
           ))}
         </div>
@@ -64,9 +60,9 @@ function Home() {
               fetchMore({
                 variables: { after: endCursor },
                 updateQuery: (prevResult, { fetchMoreResult }) => {
-                  fetchMoreResult.links.edges = [
-                    ...prevResult.links.edges,
-                    ...fetchMoreResult.links.edges,
+                  fetchMoreResult.roles.edges = [
+                    ...prevResult.roles.edges,
+                    ...fetchMoreResult.roles.edges,
                   ];
                   return fetchMoreResult;
                 },
