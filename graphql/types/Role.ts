@@ -1,4 +1,5 @@
 // /graphql/types/Link.ts
+import { prisma } from "../../lib/prisma";
 import { builder } from "../builder";
 
 builder.prismaObject('Role', {

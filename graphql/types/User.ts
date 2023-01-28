@@ -1,4 +1,5 @@
 // /graphql/types/User.ts
+import { prisma } from "../../lib/prisma";
 import { builder } from "../builder";
 
 builder.prismaObject('User', {
