@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import SvgIcon from './SvgIcon';
+import SvgIcon from '../icons/SvgIcon';
 
 const menuItems = [
   {

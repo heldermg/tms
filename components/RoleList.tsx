@@ -1,7 +1,7 @@
 import { Role } from '@prisma/client';
 import Link from 'next/link';
 import React from 'react';
-import SvgIcon from './Layout/SvgIcon';
+import SvgIcon from './icons/SvgIcon';
 
 export const RoleList = ({ roles }: any) => {
   console.log(roles);
