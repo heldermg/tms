@@ -6,7 +6,7 @@ import type { Team } from "@prisma/client"
 import { TeamList } from "../../components/TeamList"
 
 const AllTeamsQuery = gql`
-  query allTeamsQuery($first: Int, $after: ID) {
+  query allTeamsQuery($first: Int, $after: String) {
     teams(first: $first, after: $after) {
       pageInfo {
         endCursor
@@ -17,8 +17,10 @@ const AllTeamsQuery = gql`
         node {
           id
           name
+          managerId
           members {
             id
+            name
           }
         }
       }
@@ -27,7 +29,9 @@ const AllTeamsQuery = gql`
 `
 
 function TeamListPage() {
-  const { data, loading, error, fetchMore } = useQuery(AllTeamsQuery, {});
+  const { data, loading, error, fetchMore } = useQuery(AllTeamsQuery, {
+    fetchPolicy: "no-cache"
+  });
 
 
   if (loading) return <p>Loading...</p>;

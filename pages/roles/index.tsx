@@ -1,12 +1,10 @@
 // /pages/index.tsx
 import Head from "next/head";
 import { gql, useQuery } from "@apollo/client";
-import type { Role } from "@prisma/client";
-import { RoleDetail } from "../../components/RoleDetail";
 import { RoleList } from "../../components/RoleList";
 
 const AllRolesQuery = gql`
-  query allRolesQuery($first: Int, $after: ID) {
+  query allRolesQuery($first: Int, $after: String) {
     roles(first: $first, after: $after) {
       pageInfo {
         endCursor

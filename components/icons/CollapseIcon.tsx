@@ -1,14 +1,23 @@
 import * as React from "react";
 
-function CollapsIcon({ fill = "#6C7281", ...rest }) {
+interface CollapseIconProps {
+  fill?: string,
+  title: string,
+  desc?: string
+}
+
+function CollapseIcon({ fill = "#6C7281", title, desc }: CollapseIconProps) {
   return (
     <svg
       width={16}
       height={15}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      {...rest}
+      aria-labelledby="CollapseTitle CollapseDesc"
+      role="img"
     >
+      <title id="CollapseTitle">{title}</title>
+      <desc id="CollapseDesc">{desc}</desc>
       <path
         d="M8.901 1.768L7.134 0 0 7.134l7.134 7.133L8.9 12.5 3.535 7.134l5.366-5.367z"
         fill={fill}
@@ -21,4 +30,4 @@ function CollapsIcon({ fill = "#6C7281", ...rest }) {
   );
 }
 
-export default CollapsIcon;
+export default CollapseIcon;

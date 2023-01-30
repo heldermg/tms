@@ -2,7 +2,7 @@ import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState, useMemo } from "react";
-import CollapsIcon from "./icons/CollapsIcon";
+import CollapseIcon from "./icons/CollapseIcon";
 import SvgIcon from "./icons/SvgIcon";
 
 const menuItems = [
@@ -10,19 +10,19 @@ const menuItems = [
     id: 1,
     href: '/',
     title: 'Home',
-    icon: <SvgIcon className="w-10 h-10" iconType="home" />,
+    icon: <SvgIcon iconType="home" title="Home" desc="Home Button" className="w-10 h-10" />,
   },
   {
     id: 2,
     href: '/roles',
     title: 'Roles',
-    icon: <SvgIcon className="w-10 h-10" iconType="newspaper" />,
+    icon: <SvgIcon iconType="newspaper" title="Roles" desc="Roles Button" className="w-10 h-10" />,
   },
   {
     id: 3,
     href: '/teams',
     title: 'Teams',
-    icon: <SvgIcon className="w-10 h-10" iconType="user-group" />,
+    icon: <SvgIcon iconType="user-group" title="Teams" desc="Teams Button" className="w-10 h-10" />,
   },
 ]
 
@@ -79,7 +79,12 @@ const Sidebar = () => {
       <div className="flex flex-col">
         <div className="flex items-center justify-between relative">
           <div className="flex items-center pl-1 gap-4">
-            <SvgIcon iconType="list-bullet" className="w-10 h-10" />
+            <SvgIcon 
+              iconType="list-bullet"
+              title="Menu"
+              desc="Menu Collapse"
+              className="w-6 h-6"
+            />
             <span
               className={classNames("mt-2 text-lg font-medium text-text", {
                 hidden: toggleCollapse,
@@ -93,7 +98,10 @@ const Sidebar = () => {
               className={collapseIconClasses}
               onClick={handleSidebarToggle}
             >
-              <CollapsIcon />
+              <CollapseIcon 
+                title="Expandir/Recolher Menu" 
+                desc="Botão de Expandir/Recolher Menu"
+              />
             </button>
           )}
         </div>
@@ -127,7 +135,12 @@ const Sidebar = () => {
 
       <div className={`${getNavItemClasses({})} px-3 py-4`}>
         <div style={{ width: "2.5rem" }}>
-          <SvgIcon iconType="power" className="w-10 h-10" />
+          <SvgIcon
+            iconType="power"
+            title="Logout"
+            desc="Logout Button"
+            className="w-6 h-6"
+          />
         </div>
         {!toggleCollapse && (
           <span className={classNames("text-md font-medium text-text-light")}>

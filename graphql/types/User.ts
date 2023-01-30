@@ -1,4 +1,5 @@
 // /graphql/types/User.ts
+import { users } from "../../data/users";
 import { prisma } from "../../lib/prisma";
 import { builder } from "../builder";
 
@@ -25,7 +26,19 @@ builder.queryField('users', (t) =>
   t.prismaConnection({
     type: 'User',
     cursor: 'id',
-    resolve: (query, _parent, _args, _ctx, _info) =>
-      prisma.user.findMany({ ...query })
+    args: {
+      withoutTeam: t.arg.boolean(),
+    },
+    resolve: async (query, _parent, args, _ctx, _info) => {
+      const { withoutTeam } = args
+
+      const users = withoutTeam ? 
+        await prisma.user.findMany({ ...query,
+          where: {
+            teamId: null
+          }
+        }) : await prisma.user.findMany({ ...query})
+      return users
+    }
   })
 )
