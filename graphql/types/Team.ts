@@ -17,9 +17,17 @@ builder.queryField('teams', (t) =>
   t.prismaConnection({
     type: 'Team',
     cursor: 'id',
-    resolve: async (query, _parent, _args, _ctx, _info) => {
-      const teams = await prisma.team.findMany({ ...query })
-      return teams
+    args: {
+      id: t.arg.string(),
+    },
+    resolve: async (query, _parent, args, _ctx, _info) => {
+      const { id } = args
+
+      const teams = id 
+        ? await prisma.team.findMany({ ...query, where: { id } })
+        : await prisma.team.findMany({ ...query })
+
+        return teams
     },
   })
 )

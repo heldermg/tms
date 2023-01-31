@@ -2,8 +2,8 @@
 import { gql } from '@apollo/client'
 
 export const ROLES_QUERY = gql`
-  query rolesQuery($first: Int, $after: String) {
-    roles(first: $first, after: $after) {
+  query rolesQuery($first: Int, $after: String, $id: String) {
+    roles(first: $first, after: $after, id: $id) {
       pageInfo {
         endCursor
         hasNextPage

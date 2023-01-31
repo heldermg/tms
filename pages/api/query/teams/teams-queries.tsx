@@ -2,8 +2,8 @@
 import { gql } from '@apollo/client'
 
 export const TEAMS_QUERY = gql`
-  query teamsQuery($first: Int, $after: String) {
-    teams(first: $first, after: $after) {
+  query teamsQuery($first: Int, $after: String, $id: String) {
+    teams(first: $first, after: $after, id: $id) {
       pageInfo {
         endCursor
         hasNextPage

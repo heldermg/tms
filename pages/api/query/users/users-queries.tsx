@@ -2,8 +2,8 @@
 import { gql } from '@apollo/client'
 
 export const USERS_QUERY = gql`
-  query usersQuery($first: Int, $after: String, $withoutTeam: Boolean) {
-    users(first: $first, after: $after, withoutTeam: $withoutTeam) {
+  query usersQuery($first: Int, $after: String, $withoutTeam: Boolean, $id: String) {
+    users(first: $first, after: $after, withoutTeam: $withoutTeam, id: $id) {
       edges {
         node {
           id
