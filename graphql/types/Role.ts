@@ -72,6 +72,57 @@ builder.mutationField('createRole', (t) =>
   })
 )
 
+builder.mutationField('updateRole', (t) =>
+  t.prismaField({
+    type: 'Role',
+    args: {
+      id: t.arg.string({ required: true }),
+      name: t.arg.string({ required: true }),
+      acronym: t.arg.string({ required: true }),
+      description: t.arg.string({ required: true }),
+    },
+    resolve: async (query, _parent, args, ctx) => {
+      const { id, name, acronym, description } = args
+
+      if (!id) {
+        throw Error('Error! Id not informed')
+      }
+
+      const role = await prisma.role.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!role) {
+        throw Error(`Error! Role does not exist anymore.`)
+      }
+
+      if (role.acronym != acronym) {
+        const roleWithAcronym = await prisma.role.findUnique({
+          where: {
+            acronym,
+          },
+        })
+        if (roleWithAcronym) {
+          throw Error(`Error! Role with acronym ${acronym} already exist.`)
+        }
+      }
+
+      return await prisma.role.update({
+        where: {
+          id,
+        },
+        data: {
+          name,
+          acronym,
+          description,
+        },
+      })
+    },
+  })
+)
+
 builder.mutationField('deleteRole', (t) =>
   t.prismaField({
     type: 'Role',
@@ -80,12 +131,11 @@ builder.mutationField('deleteRole', (t) =>
     },
     resolve: async (query, _parent, args, ctx) => {
       const { id } = args
-      console.log('id')
-      console.log(id)
 
       if (!id) {
         throw Error('Error! Id not informed')
       }
+
       const role = await prisma.role.findUnique({
         where: {
           id,

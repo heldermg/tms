@@ -69,6 +69,55 @@ builder.mutationField('createTeam', (t) =>
   })
 )
 
+builder.mutationField('updateTeam', (t) =>
+  t.prismaField({
+    type: 'Team',
+    args: {
+      id: t.arg.string({ required: true }),
+      name: t.arg.string({ required: true }),
+      managerId: t.arg.string({ required: true }),
+    },
+    resolve: async (query, _parent, args, ctx) => {
+      const { id, name, managerId } = args
+
+      if (!id) {
+        throw Error('Error! Id not informed')
+      }
+
+      const team = await prisma.team.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!team) {
+        throw Error(`Error! Team does not exist anymore.`)
+      }
+
+      if (team.name != name) {
+        const teamWithName = await prisma.team.findUnique({
+          where: {
+            name,
+          },
+        })
+        if (teamWithName) {
+          throw Error(`Error! Team with name ${name} already exist.`)
+        }
+      }
+
+      return await prisma.team.update({
+        where: {
+          id,
+        },
+        data: {
+          name,
+          managerId,
+        },
+      })
+    },
+  })
+)
+
 builder.mutationField('deleteTeam', (t) =>
   t.prismaField({
     type: 'Team',

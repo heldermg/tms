@@ -52,7 +52,7 @@ export const UserList = ({ users }: any) => {
           {users.edges.map(({ node }: { node: User }) => (
             <tr key={node.id}>
               <td className="px-6 py-4">{node.name}</td>
-              <td className="px-6 py-4 text-center">{node.email}</td>
+              <td className="px-6 py-4 text-left">{node.email}</td>
               <td className="px-6 py-4">
                 <Link href={`/users/${node.id}`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
