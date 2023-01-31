@@ -19,8 +19,6 @@ builder.queryField('teams', (t) =>
     cursor: 'id',
     resolve: async (query, _parent, _args, _ctx, _info) => {
       const teams = await prisma.team.findMany({ ...query })
-      console.log(teams)
-      
       return teams
     }
   })
@@ -68,5 +66,40 @@ builder.mutationField("createTeam", (t) =>
         }
       })
     }
+  })
+)
+
+builder.mutationField("deleteTeam", (t) =>
+  t.prismaField({
+    type: 'Team',
+    args: {
+      id: t.arg.string({ required: true }),
+    },
+    resolve: async (query, _parent, args, ctx) => {
+      const { id } = args
+      console.log('id');
+      console.log(id);
+
+      if (!id) {
+        throw Error("Error! Id not informed")
+      }
+      const team = await prisma.team.findUnique({
+        where: {
+          id
+        }
+      })
+      
+      if (!team) {
+        throw Error(`Error! Team not found`)
+      }
+
+      await prisma.team.delete({
+        where: {
+          id
+        }
+      })
+
+      return team
+    },
   })
 )

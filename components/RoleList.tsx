@@ -1,13 +1,54 @@
+import { gql, useMutation } from '@apollo/client';
 import { Role } from '@prisma/client';
 import Link from 'next/link';
 import React from 'react'
+import { type SubmitHandler, useForm } from 'react-hook-form'
+import toast, { Toaster } from 'react-hot-toast'
 import SvgIcon from './icons/SvgIcon'
 
+type FormValues = {
+  id: string;
+}
+
+const DeleteRoleMutation = gql`
+  mutation deleteRole($id: String!) {
+    deleteRole(id: $id) {
+      id
+    }
+  }
+`
+
 export const RoleList = ({ roles }: any) => {
-  console.log(roles)
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormValues>()
+
+  const [deleteRole, { loading, error }] = useMutation(DeleteRoleMutation, {
+    onCompleted: () => reset()
+  })
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const { id } = data
+    const variables = { id }
+    try {
+      await toast.promise(deleteRole({ variables }), {
+        loading: 'Deleting the Role..',
+        success: 'Role successfully deleted!🎉',
+        error: `Something went wrong 😥 Please try again -  ${error}`,
+      })
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <div className="flex flex-col justify-center items-center">
+      <Toaster />
       <table className="shadow-lg bg-white table-auto">
         <caption className="px-6 py-3 font-bold text-2xl bg-gray-200">Role List</caption>
         <thead>
@@ -32,7 +73,7 @@ export const RoleList = ({ roles }: any) => {
               <td className="px-6 py-4">{node.name}</td>
               <td className="px-6 py-4">{node.acronym}</td>
               <td className="px-6 py-4">{node.description}</td>
-              <td className="px-6 py-4">
+              <td className="px-6 py-4 grid grid-cols-3 text-center">
                 <Link href={`/roles/${node.id}`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
                     <SvgIcon 
@@ -53,16 +94,21 @@ export const RoleList = ({ roles }: any) => {
                     />
                   </a>
                 </Link>
-                <Link href={`/roles/${node.id}/delete`}>
-                  <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <input type="hidden" value={node.id} name="roleId" />
+                  <button
+                    disabled={loading}
+                    type="submit"
+                    className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
+                  >
                     <SvgIcon 
                       iconType="trash"
                       title="Delete"
                       desc="Delete Button"
                       className="w-6 h-6"
                     />
-                  </a>
-                </Link>
+                  </button>
+                </form>
               </td>
             </tr>
           ))}

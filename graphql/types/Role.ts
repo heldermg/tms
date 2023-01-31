@@ -18,8 +18,21 @@ builder.queryField('roles', (t) =>
   t.prismaConnection({
     type: 'Role',
     cursor: 'id',
-    resolve: (query, _parent, _args, _ctx, _info) =>
-      prisma.role.findMany({ ...query })
+    args: {
+      id: t.arg.string(),
+    },
+    resolve: async (query, _parent, args, _ctx, _info) => {
+      const { id } = args
+      
+      const roles = id ?
+      await prisma.role.findMany({
+        where: {
+          id
+        }
+      }) : await prisma.role.findMany({ ...query })
+
+      return roles
+    }
   })
 )
 
@@ -68,6 +81,8 @@ builder.mutationField("deleteRole", (t) =>
     },
     resolve: async (query, _parent, args, ctx) => {
       const { id } = args
+      console.log('id');
+      console.log(id);
 
       if (!id) {
         throw Error("Error! Id not informed")
@@ -89,7 +104,6 @@ builder.mutationField("deleteRole", (t) =>
       })
 
       return role
-      //return null
     },
   })
 )
