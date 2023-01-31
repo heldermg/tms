@@ -1,24 +1,66 @@
+import { Role } from '@prisma/client'
+import Link from 'next/link'
 import React from 'react'
+import { Toaster } from 'react-hot-toast'
 
 interface RoleDetailProps {
-  id: string
-  name: string
-  acronym: string
-  description: string
+  role: Role
 }
 
-export const RoleDetail = ({
-  id,
-  name,
-  acronym,
-  description,
-}: RoleDetailProps) => {
+export const RoleDetail = ({ role }: RoleDetailProps) => {
+  const { id, name, acronym, description } = role
+  
   return (
-    <div className="shadow  max-w-md  rounded">
-      <div className="p-5 flex flex-col space-y-2">
-        <p className="text-sm text-blue-500">{name}</p>
-        <p className="text-lg font-medium">{acronym}</p>
-        <p className="text-gray-600">{description}</p>
+    <div className="container mx-auto max-w-md py-12">
+      <Toaster />
+      <h1 className="text-3xl font-medium my-5">Role {name} Detail</h1>
+      <div className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg">
+        <label className="block">
+          <span className="text-gray-700">Name</span>
+          <input
+            placeholder="Name"
+            value={name}
+            disabled
+            name="name"
+            type="text"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </label>
+        <label className="block">
+          <span className="text-gray-700">Acronym</span>
+          <input
+            placeholder="Acronym"
+            value={acronym}
+            disabled
+            name="acronym"
+            type="text"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </label>
+        <label className="block">
+          <span className="text-gray-700">Description</span>
+          <input
+            placeholder="Description"
+            value={description}
+            disabled
+            name="description"
+            type="text"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </label>
+
+        <div className="capitalize font-medium py-2 px-4 rounded-md">
+          <Link href={`/roles/`}>
+            <a className="w-full">
+              <button
+                type="button"
+                className="w-full capitalize bg-gray-500 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-600"
+              >
+                Voltar
+              </button>
+            </a>
+          </Link>
+        </div>
       </div>
     </div>
   )
