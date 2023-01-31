@@ -2,13 +2,16 @@
 
 import Head from 'next/head'
 import { useQuery } from '@apollo/client'
-import { TeamList } from '../../components/team/TeamList'
-import { TEAMS_QUERY } from '../api/query/teams/teams-queries'
+import { UserList } from '../../components/user/UserList'
+import { USERS_QUERY } from '../api/query/users/users-queries'
 
-function TeamListPage() {
-  const { data, loading, error, fetchMore } = useQuery(TEAMS_QUERY, {
+function UserListPage() {
+  const { data, loading, error, fetchMore } = useQuery(USERS_QUERY, {
     fetchPolicy: 'no-cache',
   })
+
+  console.log(error);
+  
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Oh no... {error.message}</p>
@@ -21,9 +24,9 @@ function TeamListPage() {
         <title>Teams</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <TeamList teams={data?.teams} />
+      <UserList users={data?.users} />
     </div>
   )
 }
 
-export default TeamListPage
+export default UserListPage

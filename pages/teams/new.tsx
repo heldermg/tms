@@ -1,41 +1,17 @@
 // pages/roles/new.tsx
-
 import React from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import toast, { Toaster } from 'react-hot-toast'
-//import { getSession } from '@auth0/nextjs-auth0'
-//import prisma from '../lib/prisma'
-import type { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { User } from '@prisma/client'
+import { TEAMS_CREATE_MUTATION } from '../api/query/teams/teams-queries'
+import { USERS_QUERY } from '../api/query/users/users-queries'
 
 type FormValues = {
-  name: string;
-  managerId: string;
+  name: string
+  managerId: string
 }
-
-const CreateTeamMutation = gql`
-  mutation createTeam($name: String!, $managerId: String!) {
-    createTeam(name: $name, managerId: $managerId) {
-      name
-      managerId
-    }
-  }
-`
-
-const AllUsersQuery = gql`
-  query allUsersQuery($first: Int, $after: String, $withoutTeam: Boolean) {
-    users(first: $first, after: $after, withoutTeam: $withoutTeam) {
-      edges {
-        node {
-          id
-          name
-        }
-      }
-    }
-  }
-`
 
 const NewTeamForm = () => {
   const {
@@ -45,20 +21,19 @@ const NewTeamForm = () => {
     reset,
   } = useForm<FormValues>()
 
-  const [createTeam, { loading, error }] = useMutation(CreateTeamMutation, {
-    onCompleted: () => reset()
+  const [createTeam, { loading, error }] = useMutation(TEAMS_CREATE_MUTATION, {
+    onCompleted: () => reset(),
   })
 
-  const { 
-    data: usersData, 
-    loading: usersLoading, 
-    error: usersError, 
-    fetchMore 
-  } = useQuery(AllUsersQuery, 
-    { 
-      variables: { withoutTeam: true }, 
-      fetchPolicy: "no-cache" 
-    });
+  const {
+    data: usersData,
+    loading: usersLoading,
+    error: usersError,
+    fetchMore: usersFetchMore,
+  } = useQuery(USERS_QUERY, {
+    variables: { withoutTeam: true },
+    fetchPolicy: 'no-cache',
+  })
 
   if (usersError) return <p>Oh no... {usersError.message}</p>
 
@@ -71,7 +46,6 @@ const NewTeamForm = () => {
         success: 'Team successfully created!🎉',
         error: `Something went wrong 😥 Please try again -  ${error}`,
       })
-
     } catch (error) {
       console.error(error)
     }
@@ -81,7 +55,10 @@ const NewTeamForm = () => {
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
       <h1 className="text-3xl font-medium my-5">Create a new Team</h1>
-      <form className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <label className="block">
           <span className="text-gray-700">Name</span>
           <input
@@ -104,7 +81,9 @@ const NewTeamForm = () => {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
               {usersData?.users.edges.map(({ node }: { node: User }) => (
-                <option key={node.id} value={node.id}>{node.name}</option>
+                <option key={node.id} value={node.id}>
+                  {node.name}
+                </option>
               ))}
             </select>
           )}

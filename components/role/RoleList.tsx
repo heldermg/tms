@@ -1,38 +1,21 @@
-import { gql, useMutation } from '@apollo/client';
-import { Role } from '@prisma/client';
-import Link from 'next/link';
+import { useMutation } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
+import { Role } from '@prisma/client'
+import Link from 'next/link'
 import React from 'react'
-import { type SubmitHandler, useForm } from 'react-hook-form'
 import toast, { Toaster } from 'react-hot-toast'
-import SvgIcon from './icons/SvgIcon'
-
-type FormValues = {
-  id: string;
-}
-
-const DeleteRoleMutation = gql`
-  mutation deleteRole($id: String!) {
-    deleteRole(id: $id) {
-      id
-    }
-  }
-`
+import {
+  ROLES_DELETE_MUTATION,
+  ROLES_QUERY,
+} from '../../pages/api/query/roles/roles-queries'
+import SvgIcon from '../icons/SvgIcon'
 
 export const RoleList = ({ roles }: any) => {
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<FormValues>()
-
-  const [deleteRole, { loading, error }] = useMutation(DeleteRoleMutation, {
-    onCompleted: () => reset()
+  const [deleteRole, { loading, error }] = useMutation(ROLES_DELETE_MUTATION, {
+    refetchQueries: [{ query: ROLES_QUERY }, getOperationName(ROLES_QUERY)!],
   })
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const { id } = data
+  async function handleDeleteRole(id: string) {
     const variables = { id }
     try {
       await toast.promise(deleteRole({ variables }), {
@@ -40,7 +23,6 @@ export const RoleList = ({ roles }: any) => {
         success: 'Role successfully deleted!🎉',
         error: `Something went wrong 😥 Please try again -  ${error}`,
       })
-
     } catch (error) {
       console.error(error)
     }
@@ -50,7 +32,9 @@ export const RoleList = ({ roles }: any) => {
     <div className="flex flex-col justify-center items-center">
       <Toaster />
       <table className="shadow-lg bg-white table-auto">
-        <caption className="px-6 py-3 font-bold text-2xl bg-gray-200">Role List</caption>
+        <caption className="px-6 py-3 font-bold text-2xl bg-gray-200">
+          Role List
+        </caption>
         <thead>
           <tr>
             <th scope="col" className="bg-blue-50 border text-left px-8 py-4">
@@ -68,7 +52,7 @@ export const RoleList = ({ roles }: any) => {
           </tr>
         </thead>
         <tbody>
-          {roles.edges.map(({ node }: { node: Role }) => (
+          {roles.edges.map(({ node }: { node: Role }, index: number) => (
             <tr key={node.id}>
               <td className="px-6 py-4">{node.name}</td>
               <td className="px-6 py-4">{node.acronym}</td>
@@ -76,7 +60,7 @@ export const RoleList = ({ roles }: any) => {
               <td className="px-6 py-4 grid grid-cols-3 text-center">
                 <Link href={`/roles/${node.id}`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-                    <SvgIcon 
+                    <SvgIcon
                       iconType="magnifying-glass-plus"
                       title="Detail"
                       desc="Detail Button"
@@ -86,7 +70,7 @@ export const RoleList = ({ roles }: any) => {
                 </Link>
                 <Link href={`/roles/${node.id}/edit`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
-                    <SvgIcon 
+                    <SvgIcon
                       iconType="pencil-square"
                       title="Edit"
                       desc="Edit Button"
@@ -94,21 +78,18 @@ export const RoleList = ({ roles }: any) => {
                     />
                   </a>
                 </Link>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <input type="hidden" value={node.id} name="roleId" />
-                  <button
-                    disabled={loading}
-                    type="submit"
-                    className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
-                  >
-                    <SvgIcon 
-                      iconType="trash"
-                      title="Delete"
-                      desc="Delete Button"
-                      className="w-6 h-6"
-                    />
-                  </button>
-                </form>
+                <button
+                  disabled={loading}
+                  onClick={() => handleDeleteRole(node.id)}
+                  className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
+                >
+                  <SvgIcon
+                    iconType="trash"
+                    title="Delete"
+                    desc="Delete Button"
+                    className="w-6 h-6"
+                  />
+                </button>
               </td>
             </tr>
           ))}

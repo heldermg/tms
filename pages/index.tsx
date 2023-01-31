@@ -1,10 +1,9 @@
 // /pages/index.tsx
-import Head from "next/head"
-import Layout from "../components/Layout"
+import Head from 'next/head'
+import Layout from '../components/Layout'
 
 function Home() {
   return (
-    
     <div>
       <Head>
         <title>TMS - Team Management System</title>
@@ -16,8 +15,7 @@ function Home() {
         </div>
       </div>
     </div>
-    
   )
 }
 
-export default Home;
+export default Home

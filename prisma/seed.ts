@@ -6,13 +6,13 @@ const prisma = new PrismaClient()
 
 async function main() {
   await prisma.role.createMany({
-    data: roles
+    data: roles,
   })
 
   const managerRole = await prisma.role.findUnique({
     where: {
-      acronym: 'Mgr'
-    }
+      acronym: 'Mgr',
+    },
   })
 
   await prisma.user.createMany({
@@ -21,8 +21,8 @@ async function main() {
 
   const userCreated = await prisma.user.findUnique({
     where: {
-      email: 'helder.gomes@serpro.gov.br'
-    }
+      email: 'helder.gomes@serpro.gov.br',
+    },
   })
 
   const teamCreated = await prisma.team.create({
@@ -33,29 +33,29 @@ async function main() {
           where: {
             id: userCreated!.id,
           },
-          create: userCreated!
+          create: userCreated!,
         },
-      }
+      },
     },
   })
 
   await prisma.user.update({
     where: {
-      id: userCreated!.id
+      id: userCreated!.id,
     },
     data: {
       teamId: teamCreated.id,
       roles: {
         connect: {
-          id: managerRole!.id
-        }
-      }
-    }
+          id: managerRole!.id,
+        },
+      },
+    },
   })
 }
 
 main()
-  .catch(e => {
+  .catch((e) => {
     console.error(e)
     process.exit(1)
   })

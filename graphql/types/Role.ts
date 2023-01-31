@@ -1,8 +1,6 @@
 // /graphql/types/Role.ts
-
-import { RoleDetail } from "../../components/RoleDetail";
-import { prisma } from "../../lib/prisma";
-import { builder } from "../builder";
+import { prisma } from '../../lib/prisma'
+import { builder } from '../builder'
 
 builder.prismaObject('Role', {
   fields: (t) => ({
@@ -10,11 +8,11 @@ builder.prismaObject('Role', {
     name: t.exposeString('name'),
     acronym: t.exposeString('acronym'),
     description: t.exposeString('description'),
-    users: t.relation('users')
+    users: t.relation('users'),
   }),
 })
 
-builder.queryField('roles', (t) =>  
+builder.queryField('roles', (t) =>
   t.prismaConnection({
     type: 'Role',
     cursor: 'id',
@@ -23,20 +21,21 @@ builder.queryField('roles', (t) =>
     },
     resolve: async (query, _parent, args, _ctx, _info) => {
       const { id } = args
-      
-      const roles = id ?
-      await prisma.role.findMany({
-        where: {
-          id
-        }
-      }) : await prisma.role.findMany({ ...query })
+
+      const roles = id
+        ? await prisma.role.findMany({
+            where: {
+              id,
+            },
+          })
+        : await prisma.role.findMany({ ...query })
 
       return roles
-    }
+    },
   })
 )
 
-builder.mutationField("createRole", (t) =>
+builder.mutationField('createRole', (t) =>
   t.prismaField({
     type: 'Role',
     args: {
@@ -53,8 +52,8 @@ builder.mutationField("createRole", (t) =>
 
       const role = await prisma.role.findUnique({
         where: {
-          acronym
-        }
+          acronym,
+        },
       })
 
       if (role) {
@@ -67,13 +66,13 @@ builder.mutationField("createRole", (t) =>
           name,
           acronym,
           description,
-        }
+        },
       })
-    }
+    },
   })
 )
 
-builder.mutationField("deleteRole", (t) =>
+builder.mutationField('deleteRole', (t) =>
   t.prismaField({
     type: 'Role',
     args: {
@@ -81,26 +80,26 @@ builder.mutationField("deleteRole", (t) =>
     },
     resolve: async (query, _parent, args, ctx) => {
       const { id } = args
-      console.log('id');
-      console.log(id);
+      console.log('id')
+      console.log(id)
 
       if (!id) {
-        throw Error("Error! Id not informed")
+        throw Error('Error! Id not informed')
       }
       const role = await prisma.role.findUnique({
         where: {
-          id
-        }
+          id,
+        },
       })
-      
+
       if (!role) {
         throw Error(`Error! Role not found`)
       }
 
       await prisma.role.delete({
         where: {
-          id
-        }
+          id,
+        },
       })
 
       return role

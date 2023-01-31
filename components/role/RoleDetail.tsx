@@ -1,10 +1,10 @@
-import React from 'react';
+import React from 'react'
 
 interface RoleDetailProps {
-  id: string,
-  name: string,
-  acronym: string,
-  description: string,
+  id: string
+  name: string
+  acronym: string
+  description: string
 }
 
 export const RoleDetail = ({
@@ -21,5 +21,5 @@ export const RoleDetail = ({
         <p className="text-gray-600">{description}</p>
       </div>
     </div>
-  );
-};
+  )
+}

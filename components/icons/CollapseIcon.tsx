@@ -1,12 +1,12 @@
-import * as React from "react";
+import * as React from 'react'
 
 interface CollapseIconProps {
-  fill?: string,
-  title: string,
+  fill?: string
+  title: string
   desc?: string
 }
 
-function CollapseIcon({ fill = "#6C7281", title, desc }: CollapseIconProps) {
+function CollapseIcon({ fill = '#6C7281', title, desc }: CollapseIconProps) {
   return (
     <svg
       width={16}
@@ -27,7 +27,7 @@ function CollapseIcon({ fill = "#6C7281", title, desc }: CollapseIconProps) {
         fill={fill}
       />
     </svg>
-  );
+  )
 }
 
-export default CollapseIcon;
+export default CollapseIcon

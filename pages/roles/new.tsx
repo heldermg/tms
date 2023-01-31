@@ -2,28 +2,16 @@
 
 import React from 'react'
 import { type SubmitHandler, useForm } from 'react-hook-form'
-import { gql, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import toast, { Toaster } from 'react-hot-toast'
-//import { getSession } from '@auth0/nextjs-auth0'
-//import prisma from '../lib/prisma'
-import type { GetServerSideProps } from 'next'
 import Link from 'next/link'
+import { ROLES_CREATE_MUTATION } from '../api/query/roles/roles-queries'
 
 type FormValues = {
-  name: string;
-  acronym: string;
-  description: string;
+  name: string
+  acronym: string
+  description: string
 }
-
-const CreateRoleMutation = gql`
-  mutation createRole($name: String!, $acronym: String!, $description: String!) {
-    createRole(name: $name, acronym: $acronym, description: $description) {
-      name
-      acronym
-      description
-    }
-  }
-`
 
 const NewRoleForm = () => {
   const {
@@ -33,8 +21,8 @@ const NewRoleForm = () => {
     reset,
   } = useForm<FormValues>()
 
-  const [createRole, { loading, error }] = useMutation(CreateRoleMutation, {
-    onCompleted: () => reset()
+  const [createRole, { loading, error }] = useMutation(ROLES_CREATE_MUTATION, {
+    onCompleted: () => reset(),
   })
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
@@ -46,7 +34,6 @@ const NewRoleForm = () => {
         success: 'Role successfully created!🎉',
         error: `Something went wrong 😥 Please try again -  ${error}`,
       })
-
     } catch (error) {
       console.error(error)
     }
@@ -56,7 +43,10 @@ const NewRoleForm = () => {
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
       <h1 className="text-3xl font-medium my-5">Create a new Role</h1>
-      <form className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <label className="block">
           <span className="text-gray-700">Name</span>
           <input
@@ -115,7 +105,9 @@ const NewRoleForm = () => {
               disabled={loading}
               type="button"
               className="w-full capitalize bg-gray-500 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-600"
-            >Voltar</button>
+            >
+              Voltar
+            </button>
           </a>
         </Link>
       </form>

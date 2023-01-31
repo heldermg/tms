@@ -1,15 +1,16 @@
-import { SvgType, svgTypes } from "./SvgTypes"
+import { SvgType, svgTypes } from './SvgTypes'
 
 interface SvgIconProps {
-  className: string,
-  iconType: string,
-  title: string,
-  desc?: string,
+  className: string
+  iconType: string
+  title: string
+  desc?: string
 }
 
 const SvgIcon = ({ className, iconType, title, desc }: SvgIconProps) => {
-  
-  const svgType: SvgType | undefined = svgTypes.find(element => element.name === iconType)
+  const svgType: SvgType | undefined = svgTypes.find(
+    (element) => element.name === iconType
+  )
 
   return (
     <svg
@@ -24,12 +25,8 @@ const SvgIcon = ({ className, iconType, title, desc }: SvgIconProps) => {
     >
       <title id={`${iconType}Title`}>{title}</title>
       <desc id={`${iconType}Desc`}>{desc}</desc>
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d={svgType?.d}
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d={svgType?.d} />
     </svg>
   )
 }
-export default SvgIcon;
+export default SvgIcon

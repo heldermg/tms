@@ -1,6 +1,6 @@
 // /graphql/types/Link.ts
-import { prisma } from "../../lib/prisma";
-import { builder } from "../builder";
+import { prisma } from '../../lib/prisma'
+import { builder } from '../builder'
 
 builder.prismaObject('Team', {
   fields: (t) => ({
@@ -9,22 +9,22 @@ builder.prismaObject('Team', {
     members: t.relation('members'),
     membersCount: t.relationCount('members', {}),
     manager: t.relation('manager'),
-    managerId: t.exposeString('managerId')
+    managerId: t.exposeString('managerId'),
   }),
 })
 
-builder.queryField('teams', (t) =>  
+builder.queryField('teams', (t) =>
   t.prismaConnection({
     type: 'Team',
     cursor: 'id',
     resolve: async (query, _parent, _args, _ctx, _info) => {
       const teams = await prisma.team.findMany({ ...query })
       return teams
-    }
+    },
   })
 )
 
-builder.mutationField("createTeam", (t) =>
+builder.mutationField('createTeam', (t) =>
   t.prismaField({
     type: 'Team',
     args: {
@@ -40,8 +40,8 @@ builder.mutationField("createTeam", (t) =>
 
       const team = await prisma.team.findUnique({
         where: {
-          name
-        }
+          name,
+        },
       })
 
       if (team) {
@@ -50,8 +50,8 @@ builder.mutationField("createTeam", (t) =>
 
       const manager = await prisma.user.findUnique({
         where: {
-          id: managerId
-        }
+          id: managerId,
+        },
       })
 
       if (!manager) {
@@ -63,13 +63,13 @@ builder.mutationField("createTeam", (t) =>
         data: {
           name,
           managerId,
-        }
+        },
       })
-    }
+    },
   })
 )
 
-builder.mutationField("deleteTeam", (t) =>
+builder.mutationField('deleteTeam', (t) =>
   t.prismaField({
     type: 'Team',
     args: {
@@ -77,26 +77,26 @@ builder.mutationField("deleteTeam", (t) =>
     },
     resolve: async (query, _parent, args, ctx) => {
       const { id } = args
-      console.log('id');
-      console.log(id);
+      console.log('id')
+      console.log(id)
 
       if (!id) {
-        throw Error("Error! Id not informed")
+        throw Error('Error! Id not informed')
       }
       const team = await prisma.team.findUnique({
         where: {
-          id
-        }
+          id,
+        },
       })
-      
+
       if (!team) {
         throw Error(`Error! Team not found`)
       }
 
       await prisma.team.delete({
         where: {
-          id
-        }
+          id,
+        },
       })
 
       return team
