@@ -51,7 +51,7 @@ export const TeamList = ({ teams }: any) => {
           </tr>
         </thead>
         <tbody>
-          {teams.edges.map(({ node }: { node: Team }) => (
+          {teams.edges.map(({ node }: { node: any }) => (
             <tr key={node.id}>
               <td className="px-6 py-4">{node.name}</td>
               <td className="px-6 py-4 text-center">{node.members.length}</td>
