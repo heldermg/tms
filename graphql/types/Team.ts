@@ -66,13 +66,24 @@ builder.mutationField('createTeam', (t) =>
         throw Error(`Error! Manager not found.`)
       }
 
-      return await prisma.team.create({
+      const teamCreated = await prisma.team.create({
         ...query,
         data: {
           name,
           managerId,
         },
       })
+
+      await prisma.user.update({
+        where: {
+          id: manager.id
+        },
+        data: {
+          teamId: teamCreated.id
+        }
+      })
+
+      return teamCreated
     },
   })
 )
@@ -112,6 +123,34 @@ builder.mutationField('updateTeam', (t) =>
           throw Error(`Error! Team with name ${name} already exist.`)
         }
       }
+
+      const manager = await prisma.user.findUnique({
+        where: {
+          id: managerId,
+        },
+      })
+
+      if (!manager) {
+        throw Error(`Error! Manger dos not exist anymore.`)
+      }
+
+      await prisma.user.update({
+        where: {
+          id: team.managerId
+        },
+        data: {
+          teamId: null
+        }
+      })
+
+      await prisma.user.update({
+        where: {
+          id: manager.id
+        },
+        data: {
+          teamId: team.id
+        }
+      })
 
       return await prisma.team.update({
         where: {

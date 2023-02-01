@@ -33,6 +33,19 @@ export const TEAMS_CREATE_MUTATION = gql`
   }
 `
 
+export const TEAMS_UPDATE_MUTATION = gql`
+  mutation updateTeam(
+    $id: String!
+    $name: String!
+    $managerId: String!
+  ) {
+    updateTeam(id: $id, name: $name, managerId: $managerId) {
+      name
+      managerId
+    }
+  }
+`
+
 export const TEAMS_DELETE_MUTATION = gql`
   mutation deleteTeam($id: String!) {
     deleteTeam(id: $id) {

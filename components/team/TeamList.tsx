@@ -57,7 +57,7 @@ export const TeamList = ({ teams }: any) => {
               <td className="px-6 py-4 text-center">{node.members.length}</td>
               <td className="px-6 py-4 text-left">
                 {node.members
-                  .filter((m: User) => m.id == node.managerId)
+                  .filter((m: User) => (m.id == node.managerId))
                   .map((m: User) => m.name)}
               </td>
               <td className="px-6 py-4">
