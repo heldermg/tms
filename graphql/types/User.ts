@@ -42,7 +42,7 @@ builder.queryField('users', (t) =>
           },
         })
       } else {
-        await prisma.user.findMany({ ...query })
+        users = await prisma.user.findMany({ ...query })
       }
 
       return users
