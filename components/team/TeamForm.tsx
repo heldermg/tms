@@ -1,12 +1,13 @@
 import { useMutation, useQuery } from '@apollo/client'
 import { getOperationName } from '@apollo/client/utilities'
-import { Role, Team, User } from '@prisma/client'
+import { Team, User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast, Toaster } from 'react-hot-toast'
-import { TEAMS_QUERY, TEAMS_UPDATE_MUTATION } from '../../pages/api/query/teams/teams-queries'
+import { TEAMS_CREATE_MUTATION, TEAMS_QUERY, TEAMS_UPDATE_MUTATION } from '../../pages/api/query/teams/teams-queries'
 import { USERS_QUERY } from '../../pages/api/query/users/users-queries'
+import { FormType } from '../form-util'
 import SvgIcon from '../icons/SvgIcon'
 
 type FormValues = {
@@ -14,12 +15,25 @@ type FormValues = {
   managerId: string
 }
 
-interface TeamEditProps {
-  team: Team
+interface TeamFormProps {
+  team?: Team
 }
 
-export const TeamEdit = ({ team }: TeamEditProps) => {
-  const { id, name, managerId } = team
+export const TeamForm = ({ team }: TeamFormProps) => {
+  const { id, name, managerId } = team || {}
+
+  const isEdit = id ? true : false
+
+  let formType: FormType
+  if (id) {
+    formType = FormType.EDIT
+
+  } else {
+    formType = FormType.NEW
+  }
+
+  const buttonLabel = isEdit ? "Update Team" : "Create new Team"
+  const loadingButtonLabel = isEdit ? "Updating..." : "Creating..."
 
   const {
     register,
@@ -34,8 +48,13 @@ export const TeamEdit = ({ team }: TeamEditProps) => {
     }
   })
 
-  const [updateTeam, { loading, error }] = useMutation(TEAMS_UPDATE_MUTATION, {
+  const [updateTeam, { loading: loadingUpdate, error: errorUpdate }] = useMutation(TEAMS_UPDATE_MUTATION, {
     refetchQueries: [{ query: TEAMS_QUERY }, getOperationName(TEAMS_QUERY)!]
+  })
+
+  const [createTeam, { loading: loadingCreate, error:errorCreate }] = useMutation(TEAMS_CREATE_MUTATION, {
+    onCompleted: () => reset(),
+    refetchQueries: [{ query: USERS_QUERY }, getOperationName(USERS_QUERY)!]
   })
 
   const {
@@ -66,13 +85,21 @@ export const TeamEdit = ({ team }: TeamEditProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const { name, managerId } = data
-    const variables = { id, name, managerId }
+    const variables = { id: (isEdit ? id : null), name, managerId }
     try {
-      await toast.promise(updateTeam({ variables }), {
-        loading: 'Updating the Team..',
-        success: 'Team successfully updated!🎉',
-        error: `Something went wrong 😥 Please try again -  ${error}`,
-      })
+      if (isEdit) {
+        await toast.promise(updateTeam({ variables }), {
+          loading: 'Updating the Team..',
+          success: 'Team successfully updated!🎉',
+          error: `Something went wrong 😥 Please try again -  ${errorUpdate}`,
+        })
+      } else {
+        await toast.promise(createTeam({ variables }), {
+          loading: 'Creating new Team..',
+          success: 'Team successfully created!🎉',
+          error: `Something went wrong 😥 Please try again -  ${errorCreate}`,
+        })
+      }
     } catch (error) {
       console.error(error)
     }
@@ -81,7 +108,7 @@ export const TeamEdit = ({ team }: TeamEditProps) => {
   return (
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
-      <h1 className="text-3xl font-medium my-5">Team {name} Edit</h1>
+      <h1 className="text-3xl font-medium my-5 text-center">{formType} Team {name}</h1>
       <form
         className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg"
         onSubmit={handleSubmit(onSubmit)}
@@ -92,6 +119,7 @@ export const TeamEdit = ({ team }: TeamEditProps) => {
             placeholder="Name"
             {...register('name', { required: true })}
             type="text"
+            maxLength={30}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
         </label>
@@ -106,9 +134,11 @@ export const TeamEdit = ({ team }: TeamEditProps) => {
               {...register('managerId', { required: true })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              <option key={manager.id} value={manager.id}>
-                {manager.name}
-              </option>
+              {manager &&
+                <option key={manager.id} value={manager.id}>
+                  {manager.name}
+                </option>
+              }
               {usersData?.users.edges.map(({ node }: { node: User }) => (
                 <option key={node.id} value={node.id}>
                   {node.name}
@@ -119,11 +149,11 @@ export const TeamEdit = ({ team }: TeamEditProps) => {
         </label>
         
         <button
-          disabled={loading}
+          disabled={loadingCreate || loadingUpdate}
           type="submit"
           className="capitalize bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600"
         >
-          {loading ? (
+          {loadingCreate || loadingUpdate ? (
             <span className="flex items-center justify-center">
               <SvgIcon
                 iconType='animate-spin'
@@ -131,10 +161,10 @@ export const TeamEdit = ({ team }: TeamEditProps) => {
                 title='Animate Spin'
                 desc='Animate Spin Updating'
               />
-              Updating...
+              <span>{loadingButtonLabel}</span>
             </span>
           ) : (
-            <span>Update Team</span>
+            <span>{buttonLabel}</span>
           )}
         </button>
         <Link href={`/teams/`}>

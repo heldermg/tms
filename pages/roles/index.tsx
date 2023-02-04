@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/client'
 import { RoleList } from '../../components/role/RoleList'
 import { ROLES_QUERY } from '../api/query/roles/roles-queries'
 
-function RoleListPage() {
+function ListRolePage() {
   const { data, loading, error, fetchMore } = useQuery(ROLES_QUERY, {
     fetchPolicy: 'no-cache',
   })
@@ -25,4 +25,4 @@ function RoleListPage() {
   )
 }
 
-export default RoleListPage
+export default ListRolePage

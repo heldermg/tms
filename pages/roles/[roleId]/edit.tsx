@@ -1,12 +1,11 @@
-// pages/roles/[roleId]/index.tsx
-
+// pages/roles/[roleId]/edit.tsx
 import React from 'react'
 import { useQuery } from '@apollo/client'
 import toast from 'react-hot-toast'
 import { ROLES_QUERY } from '../../api/query/roles/roles-queries'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/router'
-import { RoleEdit } from '../../../components/role/RoleEdit'
+import { RoleForm } from '../../../components/role/RoleForm'
 
 const EditRolePage = () => {
   const router = useRouter()
@@ -28,7 +27,7 @@ const EditRolePage = () => {
   const role = nodes.shift()
 
   return (
-    <RoleEdit role={role} />
+    <RoleForm role={role} />
   )
 }
 

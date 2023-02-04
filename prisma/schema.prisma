@@ -24,32 +24,38 @@ model User {
   id           String   @id @default(uuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  name         String
-  email        String   @unique
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(50)
   image        String?
   profile      Profile  @default(TEAM_MEMBER)
   roles        Role[]
   teamsManaged Team[]   @relation(name: "TeamManager")
   team         Team?    @relation(name: "TeamMembers", fields: [teamId], references: [id])
   teamId       String?
+
+  @@map("user") 
 }
 
 model Team {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String   @unique
+  name      String   @unique @db.VarChar(30)
   members   User[]   @relation(name: "TeamMembers")
   manager   User     @relation(name: "TeamManager", fields: [managerId], references: [id])
   managerId String
+
+  @@map("team") 
 }
 
 model Role {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  name        String
-  acronym     String   @unique
-  description String
+  name        String   @db.VarChar(30)
+  acronym     String   @unique @db.VarChar(6)
+  description String   @db.VarChar(200)
   users       User[]
+
+  @@map("role")
 }

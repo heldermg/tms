@@ -21,7 +21,7 @@ async function main() {
 
   const userCreated = await prisma.user.findUnique({
     where: {
-      email: 'helder.gomes@serpro.gov.br',
+      email: 'helder@martins.com',
     },
   })
 

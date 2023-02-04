@@ -13,7 +13,7 @@ export const RoleDetail = ({ role }: RoleDetailProps) => {
   return (
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
-      <h1 className="text-3xl font-medium my-5">Role {name} Detail</h1>
+      <h1 className="text-3xl font-medium my-5 text-center">Role {name} Detail</h1>
       <div className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg">
         <label className="block">
           <span className="text-gray-700">Name</span>
@@ -39,12 +39,13 @@ export const RoleDetail = ({ role }: RoleDetailProps) => {
         </label>
         <label className="block">
           <span className="text-gray-700">Description</span>
-          <input
+          <textarea
             placeholder="Description"
             value={description}
             disabled
             name="description"
-            type="text"
+            rows={4}
+            maxLength={200}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
         </label>

@@ -43,9 +43,6 @@ export const RoleList = ({ roles }: any) => {
             <th scope="col" className="bg-blue-50 border text-left px-8 py-4">
               Acronym
             </th>
-            <th scope="col" className="bg-blue-50 border text-left px-8 py-4">
-              Description
-            </th>
             <th scope="col" className="bg-blue-50 border text-center px-8 py-4">
               Actions
             </th>
@@ -56,7 +53,6 @@ export const RoleList = ({ roles }: any) => {
             <tr key={node.id}>
               <td className="px-6 py-4">{node.name}</td>
               <td className="px-6 py-4">{node.acronym}</td>
-              <td className="px-6 py-4">{node.description}</td>
               <td className="px-6 py-4 grid grid-cols-3 text-center">
                 <Link href={`/roles/${node.id}`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">

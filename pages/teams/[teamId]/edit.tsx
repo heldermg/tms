@@ -1,12 +1,11 @@
-// pages/roles/[teamId]/edit.tsx
-
+// pages/teams/[teamId]/edit.tsx
 import React from 'react'
 import { useQuery } from '@apollo/client'
 import toast from 'react-hot-toast'
 import { Team } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { TEAMS_QUERY } from '../../api/query/teams/teams-queries'
-import { TeamEdit } from '../../../components/team/TeamEdit'
+import { TeamForm } from '../../../components/team/TeamForm'
 
 const EditTeamPage = () => {
   const router = useRouter()
@@ -31,7 +30,7 @@ const EditTeamPage = () => {
   
 
   return (
-    <TeamEdit team={team} />
+    <TeamForm team={team} />
   )
 }
 
