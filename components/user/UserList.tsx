@@ -81,7 +81,7 @@ export const UserList = ({ users }: any) => {
                 </Link>
                 <button
                   disabled={loading}
-                  onClick={() => handleDeleteUser(node.id)}
+                  onClick={() => { if (window.confirm(`Are you sure you want to delete the user ${node.name} ?`)) handleDeleteUser(node.id) } }
                   className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
                 >
                   <SvgIcon
