@@ -3,7 +3,7 @@ import { getOperationName } from '@apollo/client/utilities'
 import { User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
-import { toast } from 'react-hot-toast'
+import { toast, Toaster } from 'react-hot-toast'
 import {
   USERS_DELETE_MUTATION,
   USERS_QUERY,
@@ -32,6 +32,7 @@ export const UserList = ({ users }: any) => {
 
   return (
     <div className="flex flex-col justify-center items-center">
+      <Toaster />
       <table className="shadow-lg bg-white table-auto">
         <caption className="px-6 py-3 font-bold text-2xl bg-gray-200">
           User List
