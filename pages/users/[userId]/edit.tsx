@@ -1,4 +1,4 @@
-// pages/teams/[teamId]/edit.tsx
+// pages/users/[userId]/edit.tsx
 import React from 'react'
 import { useQuery } from '@apollo/client'
 import toast from 'react-hot-toast'
