@@ -9,6 +9,7 @@ import {
   USERS_QUERY,
 } from '../../pages/api/query/users/users-queries'
 import SvgIcon from '../icons/SvgIcon'
+import { UserProfile } from './UserProfile'
 
 export const UserList = ({ users }: any) => {
 
@@ -44,6 +45,9 @@ export const UserList = ({ users }: any) => {
               Email
             </th>
             <th scope="col" className="bg-blue-50 border text-left px-8 py-4">
+              Profile
+            </th>
+            <th scope="col" className="bg-blue-50 border text-left px-8 py-4">
               Actions
             </th>
           </tr>
@@ -53,6 +57,7 @@ export const UserList = ({ users }: any) => {
             <tr key={node.id}>
               <td className="px-6 py-4">{node.name}</td>
               <td className="px-6 py-4 text-left">{node.email}</td>
+              <td className="px-6 py-4 text-left">{UserProfile[node.profile]}</td>
               <td className="px-6 py-4">
                 <Link href={`/users/${node.id}`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">

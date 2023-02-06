@@ -173,8 +173,6 @@ builder.mutationField('deleteTeam', (t) =>
     },
     resolve: async (query, _parent, args, ctx) => {
       const { id } = args
-      console.log('id')
-      console.log(id)
 
       if (!id) {
         throw Error('Error! Id not informed')

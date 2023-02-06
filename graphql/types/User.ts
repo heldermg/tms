@@ -2,6 +2,10 @@
 import { prisma } from '../../lib/prisma'
 import { builder } from '../builder'
 
+const Profile = builder.enumType('Profile', {
+  values: ['ADMIN', 'MANAGER', 'TEAM_MEMBER'] as const,
+})
+
 builder.prismaObject('User', {
   fields: (t) => ({
     id: t.exposeID('id'),
@@ -14,10 +18,6 @@ builder.prismaObject('User', {
     team: t.relation('team'),
     teamId: t.exposeString('teamId', { nullable: true }),
   }),
-})
-
-const Profile = builder.enumType('Profile', {
-  values: ['ADMIN', 'MANAGER', 'TEAM_MEMBER'] as const,
 })
 
 builder.queryField('users', (t) =>
@@ -46,6 +46,100 @@ builder.queryField('users', (t) =>
       }
 
       return users
+    },
+  })
+)
+
+builder.mutationField('createUser', (t) =>
+  t.prismaField({
+    type: 'User',
+    args: {
+      name: t.arg.string({ required: true }),
+      email: t.arg.string({ required: true }),
+      profile: t.arg({ 
+        type: Profile,
+        required: true 
+      }),
+      image: t.arg.string(),
+    },
+    resolve: async (query, _parent, args, ctx) => {
+      const { name, email, profile, image } = args
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      })
+
+      if (user) {
+        throw Error(`Error! User with email ${email} already exist.`)
+      }
+
+      return prisma.user.create({
+        ...query,
+        data: {
+          name,
+          email,
+          profile,
+          image
+        },
+      })
+    },
+  })
+)
+
+builder.mutationField('updateUser', (t) =>
+  t.prismaField({
+    type: 'User',
+    args: {
+      id: t.arg.string({ required: true }),
+      name: t.arg.string({ required: true }),
+      email: t.arg.string({ required: true }),
+      profile: t.arg({ 
+        type: Profile,
+        required: true 
+      }),
+      image: t.arg.string(),
+    },
+    resolve: async (query, _parent, args, ctx) => {
+      const { id, name, email, profile, image } = args
+
+      if (!id) {
+        throw Error('Error! Id not informed')
+      }
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id,
+        },
+      })
+
+      if (!user) {
+        throw Error(`Error! User does not exist anymore.`)
+      }
+
+      if (user.email != email) {
+        const userWithEmail = await prisma.user.findUnique({
+          where: {
+            email,
+          },
+        })
+        if (userWithEmail) {
+          throw Error(`Error! User with email ${email} already exist.`)
+        }
+      }
+
+      return await prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          name,
+          email,
+          profile,
+          image
+        },
+      })
     },
   })
 )
