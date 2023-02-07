@@ -1,4 +1,4 @@
-import { User } from "@prisma/client"
+import { Role, User } from "@prisma/client"
 import Link from "next/link"
 import { Toaster } from "react-hot-toast"
 import { UserProfile } from "./UserProfile"
@@ -6,9 +6,10 @@ import { UserProfile } from "./UserProfile"
 interface UserDetailProps {
   user: User
   userLoading: boolean
+  roles?: Role[]
 }
 
-export const UserDetail = ({ user, userLoading }: UserDetailProps) => {
+export const UserDetail = ({ user, userLoading, roles }: UserDetailProps) => {
   const { id, name, email, profile, image } = user
 
   return (
@@ -50,6 +51,16 @@ export const UserDetail = ({ user, userLoading }: UserDetailProps) => {
               <option key={p} value={p}>{UserProfile[p as keyof typeof UserProfile]}</option>
             ))}
           </select>
+        </label>
+        <label className="block">
+          <span className="text-gray-700">Roles</span>
+          {roles?.map((node: Role) => (
+            <div key={node.id} className='text-gray-700'>
+              <label>
+                <span>&nbsp;{node.acronym} - {node.name}</span>
+              </label>
+            </div>
+          ))}
         </label>
 
         <div className="capitalize font-medium py-2 px-4 rounded-md">

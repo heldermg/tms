@@ -3,7 +3,7 @@ import React from 'react'
 import { useQuery } from '@apollo/client'
 import toast from 'react-hot-toast'
 import { Team } from '@prisma/client'
-import { USERS_QUERY } from '../../api/query/users/users-queries'
+import { USERS_QUERY_WITH_ROLES } from '../../api/query/users/users-queries'
 import { useRouter } from 'next/router'
 import { UserDetail } from '../../../components/user/UserDetail'
 
@@ -15,7 +15,7 @@ const DetailUserPage = () => {
     toast.error('Id not informed')
   }
 
-  const { data, loading: userLoading, error } = useQuery(USERS_QUERY, {
+  const { data, loading: userLoading, error } = useQuery(USERS_QUERY_WITH_ROLES, {
     variables: { id: userId },
     fetchPolicy: 'no-cache',
   })
@@ -30,6 +30,7 @@ const DetailUserPage = () => {
     <UserDetail 
       user={user} 
       userLoading={userLoading} 
+      roles={user.roles}
     />
   )
 }

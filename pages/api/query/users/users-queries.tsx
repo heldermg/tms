@@ -27,6 +27,8 @@ export const USERS_QUERY_WITH_ROLES = gql`
           profile
           roles {
             id
+            name
+            acronym
           }
         }
       }
