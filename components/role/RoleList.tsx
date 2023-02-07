@@ -21,7 +21,7 @@ export const RoleList = ({ roles }: any) => {
       await toast.promise(deleteRole({ variables }), {
         loading: 'Deleting the Role..',
         success: 'Role successfully deleted!🎉',
-        error: `Something went wrong 😥 Please try again - Message: ${error?.message}`,
+        error: (err) => `Something went wrong 😥\nMessage:\n ${err?.message}`,
       })
     } catch (error: any) {
       console.error(error?.message)

@@ -91,13 +91,13 @@ export const TeamForm = ({ team }: TeamFormProps) => {
         await toast.promise(updateTeam({ variables }), {
           loading: 'Updating the Team..',
           success: 'Team successfully updated!🎉',
-          error: `Something went wrong 😥 Please try again -  ${errorUpdate?.message}`,
+          error: (err) => `Something went wrong 😥\nMessage:\n ${err?.message}`,
         })
       } else {
         await toast.promise(createTeam({ variables }), {
           loading: 'Creating new Team..',
           success: 'Team successfully created!🎉',
-          error: `Something went wrong 😥 Please try again -  ${errorCreate?.message}`,
+          error: (err) => `Something went wrong 😥\nMessage:\n ${err?.message}`,
         })
       }
     } catch (error: any) {

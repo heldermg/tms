@@ -21,7 +21,7 @@ export const TeamList = ({ teams }: any) => {
       await toast.promise(deleteTeam({ variables }), {
         loading: 'Deleting the Team..',
         success: 'Team successfully deleted!🎉',
-        error: `Something went wrong 😥 Please try again -  ${error?.message}`,
+        error: (err) => `Something went wrong 😥\nMessage:\n ${err?.message}`,
       })
     } catch (error: any) {
       console.error(error?.message)
