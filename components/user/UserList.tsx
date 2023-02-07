@@ -23,10 +23,10 @@ export const UserList = ({ users }: any) => {
       await toast.promise(deleteUser({ variables }), {
         loading: 'Deleting the User..',
         success: 'User successfully deleted!🎉',
-        error: `Something went wrong 😥 Please try again -  ${error}`,
+        error: `Something went wrong 😥 Please try again -  ${error?.message}`,
       })
-    } catch (error) {
-      console.error(error)
+    } catch (error: any) {
+      console.error(error?.message)
     }
   }
 

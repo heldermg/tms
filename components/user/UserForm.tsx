@@ -80,17 +80,17 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
         await toast.promise(updateUser({ variables }), {
           loading: 'Updating the User..',
           success: 'User successfully updated!🎉',
-          error: `Something went wrong 😥 Please try again -  ${errorUpdate}`,
+          error: `Something went wrong 😥 Please try again -  ${errorUpdate?.message}`,
         })
       } else {
         await toast.promise(createUser({ variables }), {
           loading: 'Creating new User..',
           success: 'User successfully created!🎉',
-          error: `Something went wrong 😥 Please try again -  ${errorCreate}`,
+          error: `Something went wrong 😥 Please try again -  ${errorCreate?.message}`,
         })
       }
-    } catch (error) {
-      console.error(error)
+    } catch (error: any) {
+      console.error(error?.message)
     }
   }
   

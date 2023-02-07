@@ -1,4 +1,5 @@
 // /graphql/types/Role.ts
+import { GraphQLError } from 'graphql'
 import { prisma } from '../../lib/prisma'
 import { builder } from '../builder'
 
@@ -57,7 +58,7 @@ builder.mutationField('createRole', (t) =>
       })
 
       if (role) {
-        throw Error(`Error! Role with acronym ${acronym} already exist.`)
+        throw new GraphQLError(`Error! Role with acronym ${acronym} already exist.`)
       }
 
       return await prisma.role.create({
@@ -85,7 +86,7 @@ builder.mutationField('updateRole', (t) =>
       const { id, name, acronym, description } = args
 
       if (!id) {
-        throw Error('Error! Id not informed')
+        throw new GraphQLError('Error! Id not informed')
       }
 
       const role = await prisma.role.findUnique({
@@ -95,7 +96,7 @@ builder.mutationField('updateRole', (t) =>
       })
 
       if (!role) {
-        throw Error(`Error! Role does not exist anymore.`)
+        throw new GraphQLError(`Error! Role does not exist anymore.`)
       }
 
       if (role.acronym != acronym) {
@@ -105,7 +106,7 @@ builder.mutationField('updateRole', (t) =>
           },
         })
         if (roleWithAcronym) {
-          throw Error(`Error! Role with acronym ${acronym} already exist.`)
+          throw new GraphQLError(`Error! Role with acronym ${acronym} already exist.`)
         }
       }
 
@@ -133,17 +134,28 @@ builder.mutationField('deleteRole', (t) =>
       const { id } = args
 
       if (!id) {
-        throw Error('Error! Id not informed')
+        throw new GraphQLError('Error! Id not informed')
       }
 
       const role = await prisma.role.findUnique({
         where: {
           id,
         },
+        include: {
+          users: {
+            select: {
+              id: true
+            }
+          }
+        }
       })
 
       if (!role) {
-        throw Error(`Error! Role not found`)
+        throw new GraphQLError(`Error! Role not found`)
+      }
+
+      if (role.users && role.users.length > 0) {
+        throw new GraphQLError(`Error! Role is in use by some user`)
       }
 
       await prisma.role.delete({

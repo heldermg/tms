@@ -64,17 +64,17 @@ export const RoleForm = ({ role }: RoleFormProps) => {
         await toast.promise(updateRole({ variables }), {
           loading: 'Updating the Role..',
           success: 'Role successfully updated!🎉',
-          error: `Something went wrong 😥 Please try again -  ${errorUpdate}`,
+          error: `Something went wrong 😥 Please try again -  ${errorUpdate?.message}`,
         })
       } else {
         await toast.promise(createRole({ variables }), {
           loading: 'Creating new Role..',
           success: 'Role successfully created!🎉',
-          error: `Something went wrong 😥 Please try again -  ${errorCreate}`,
+          error: `Something went wrong 😥 Please try again -  ${errorCreate?.message}`,
         })
       }
-    } catch (error) {
-      console.error(error)
+    } catch (error: any) {
+      console.error(error?.message)
     }
   }
   

@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client'
+import { ApolloError, useMutation } from '@apollo/client'
 import { getOperationName } from '@apollo/client/utilities'
 import { Role } from '@prisma/client'
 import Link from 'next/link'
@@ -21,10 +21,10 @@ export const RoleList = ({ roles }: any) => {
       await toast.promise(deleteRole({ variables }), {
         loading: 'Deleting the Role..',
         success: 'Role successfully deleted!🎉',
-        error: `Something went wrong 😥 Please try again -  ${error}`,
+        error: `Something went wrong 😥 Please try again - Message: ${error?.message}`,
       })
-    } catch (error) {
-      console.error(error)
+    } catch (error: any) {
+      console.error(error?.message)
     }
   }
 

@@ -1,6 +1,5 @@
 // /graphql/types/User.ts
-import { Role } from '@prisma/client'
-import { disconnect } from 'process'
+import { GraphQLError } from 'graphql'
 import { prisma } from '../../lib/prisma'
 import { builder } from '../builder'
 
@@ -75,7 +74,7 @@ builder.mutationField('createUser', (t) =>
       })
 
       if (user) {
-        throw Error(`Error! User with email ${email} already exist.`)
+        throw new GraphQLError(`Error! User with email ${email} already exist.`)
       }
 
       let rolesDb = []
@@ -87,7 +86,7 @@ builder.mutationField('createUser', (t) =>
             }
           })
           if (!r) {
-            throw Error(`Role with id ${roleId} does not exist!`)
+            throw new GraphQLError(`Role with id ${roleId} does not exist!`)
           }
           rolesDb.push({ id: r.id })
         }
@@ -127,7 +126,7 @@ builder.mutationField('updateUser', (t) =>
       const { id, name, email, profile, image, roles } = args
 
       if (!id) {
-        throw Error('Error! Id not informed')
+        throw new GraphQLError('Error! Id not informed')
       }
 
       const user = await prisma.user.findUnique({
@@ -144,7 +143,7 @@ builder.mutationField('updateUser', (t) =>
       })
 
       if (!user) {
-        throw Error(`Error! User does not exist anymore.`)
+        throw new GraphQLError(`Error! User does not exist anymore.`)
       }
 
       if (user.email != email) {
@@ -154,11 +153,11 @@ builder.mutationField('updateUser', (t) =>
           },
         })
         if (userWithEmail) {
-          throw Error(`Error! User with email ${email} already exist.`)
+          throw new GraphQLError(`Error! User with email ${email} already exist.`)
         }
       }
 
-      let newRoles: any = []
+      let rolesToConnect: any = []
       if (roles) {
         for (let roleId of roles) {
           const r = await prisma.role.findUnique({
@@ -167,13 +166,14 @@ builder.mutationField('updateUser', (t) =>
             }
           })
           if (!r) {
-            throw Error(`Role with id ${roleId} does not exist!`)
+            throw new GraphQLError(`Role with id ${roleId} does not exist!`)
           }
-          newRoles.push({ id: r.id })
+          rolesToConnect.push({ id: r.id })
         }
       }
+
       const rolesToDisconnect = user.roles
-        .filter(r => !newRoles.find((a: any) => a.id == r.id))
+        .filter(r => !rolesToConnect.find((a: any) => a.id == r.id))
 
       return await prisma.user.update({
         where: {
@@ -185,7 +185,7 @@ builder.mutationField('updateUser', (t) =>
           profile,
           image,
           roles: {
-            connect: newRoles,
+            connect: rolesToConnect,
             disconnect: rolesToDisconnect
           }
         },
@@ -204,7 +204,7 @@ builder.mutationField('deleteUser', (t) =>
       const { id } = args
 
       if (!id) {
-        throw Error('Error! Id not informed')
+        throw new GraphQLError('Error! Id not informed')
       }
       const user = await prisma.user.findUnique({
         where: {
@@ -216,11 +216,11 @@ builder.mutationField('deleteUser', (t) =>
       })
 
       if (!user) {
-        throw Error(`Error! User not found`)
+        throw new GraphQLError(`Error! User not found`)
       }
 
       if (user.team) {
-        throw Error(`Error! User is part of the team ${user.team.name}`)
+        throw new GraphQLError(`Error! User is part of the team ${user.team.name}`)
       }
 
       await prisma.user.delete({

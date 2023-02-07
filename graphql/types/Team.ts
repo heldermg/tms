@@ -1,4 +1,5 @@
 // /graphql/types/Link.ts
+import { GraphQLError } from 'graphql'
 import { prisma } from '../../lib/prisma'
 import { builder } from '../builder'
 
@@ -53,7 +54,7 @@ builder.mutationField('createTeam', (t) =>
       })
 
       if (team) {
-        throw Error(`Error! Role with name ${name} already exist.`)
+        throw new GraphQLError(`Error! Role with name ${name} already exist.`)
       }
 
       const manager = await prisma.user.findUnique({
@@ -63,7 +64,7 @@ builder.mutationField('createTeam', (t) =>
       })
 
       if (!manager) {
-        throw Error(`Error! Manager not found.`)
+        throw new GraphQLError(`Error! Manager not found.`)
       }
 
       const teamCreated = await prisma.team.create({
@@ -100,7 +101,7 @@ builder.mutationField('updateTeam', (t) =>
       const { id, name, managerId } = args
 
       if (!id) {
-        throw Error('Error! Id not informed')
+        throw new GraphQLError('Error! Id not informed')
       }
 
       const team = await prisma.team.findUnique({
@@ -110,7 +111,7 @@ builder.mutationField('updateTeam', (t) =>
       })
 
       if (!team) {
-        throw Error(`Error! Team does not exist anymore.`)
+        throw new GraphQLError(`Error! Team does not exist anymore.`)
       }
 
       if (team.name != name) {
@@ -120,7 +121,7 @@ builder.mutationField('updateTeam', (t) =>
           },
         })
         if (teamWithName) {
-          throw Error(`Error! Team with name ${name} already exist.`)
+          throw new GraphQLError(`Error! Team with name ${name} already exist.`)
         }
       }
 
@@ -131,7 +132,7 @@ builder.mutationField('updateTeam', (t) =>
       })
 
       if (!manager) {
-        throw Error(`Error! Manger dos not exist anymore.`)
+        throw new GraphQLError(`Error! Manger dos not exist anymore.`)
       }
 
       await prisma.user.update({
@@ -175,7 +176,7 @@ builder.mutationField('deleteTeam', (t) =>
       const { id } = args
 
       if (!id) {
-        throw Error('Error! Id not informed')
+        throw new GraphQLError('Error! Id not informed')
       }
       const team = await prisma.team.findUnique({
         where: {
@@ -184,7 +185,7 @@ builder.mutationField('deleteTeam', (t) =>
       })
 
       if (!team) {
-        throw Error(`Error! Team not found`)
+        throw new GraphQLError(`Error! Team not found`)
       }
 
       await prisma.team.delete({
