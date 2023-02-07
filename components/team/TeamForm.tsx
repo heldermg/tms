@@ -13,24 +13,19 @@ import SvgIcon from '../icons/SvgIcon'
 type FormValues = {
   name: string
   managerId: string
+  users?: string[]
 }
 
 interface TeamFormProps {
   team?: Team
+  users?: string[]
 }
 
-export const TeamForm = ({ team }: TeamFormProps) => {
+export const TeamForm = ({ team, users }: TeamFormProps) => {
   const { id, name, managerId } = team || {}
 
   const isEdit = id ? true : false
-
-  let formType: FormType
-  if (id) {
-    formType = FormType.EDIT
-
-  } else {
-    formType = FormType.NEW
-  }
+  let formType: FormType = id ? FormType.EDIT : FormType.NEW
 
   const buttonLabel = isEdit ? "Update Team" : "Create new Team"
   const loadingButtonLabel = isEdit ? "Updating..." : "Creating..."

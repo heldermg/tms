@@ -23,14 +23,7 @@ export const RoleForm = ({ role }: RoleFormProps) => {
   const { id, name, acronym, description } = role || {}
 
   const isEdit = id ? true : false
-
-  let formType: FormType
-  if (id) {
-    formType = FormType.EDIT
-
-  } else {
-    formType = FormType.NEW
-  }
+  let formType: FormType = id ? FormType.EDIT : FormType.NEW
 
   const buttonLabel = isEdit ? "Update Role" : "Create new Role"
   const loadingButtonLabel = isEdit ? "Updating..." : "Creating..."

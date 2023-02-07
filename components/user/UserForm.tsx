@@ -28,7 +28,6 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
   const { id, name, email, profile, image } = user || {}
 
   const isEdit = id ? true : false
-
   const formType: FormType = id ? FormType.EDIT : FormType.NEW
 
   const buttonLabel = isEdit ? "Update User" : "Create new User"
