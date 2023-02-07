@@ -6,6 +6,7 @@ import { Team } from '@prisma/client'
 import { USERS_QUERY_WITH_ROLES } from '../../api/query/users/users-queries'
 import { useRouter } from 'next/router'
 import { UserDetail } from '../../../components/user/UserDetail'
+import { Vortex } from 'react-loader-spinner'
 
 const DetailUserPage = () => {
   const router = useRouter()
@@ -23,7 +24,19 @@ const DetailUserPage = () => {
   const nodes = data?.users.edges.map(({ node }: { node: Team }) => node)
   const user = nodes?.shift()
 
-  if (userLoading) return <p>Loading...</p>
+  if (userLoading) return (
+    <div className="flex flex-col justify-center items-center">
+      <Vortex
+        visible={true}
+        height="80"
+        width="80"
+        ariaLabel="vortex-loading"
+        wrapperStyle={{}}
+        wrapperClass="vortex-wrapper"
+        colors={['#1D4ED8', 'gray', '#1D4ED8', 'gray', '#1D4ED8', 'gray']}
+      />
+    </div>
+  )
   if (error) return <p>Oh no... {error.message}</p>
 
   return (

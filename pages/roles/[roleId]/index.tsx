@@ -7,6 +7,7 @@ import { ROLES_QUERY } from '../../api/query/roles/roles-queries'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { RoleDetail } from '../../../components/role/RoleDetail'
+import { Vortex } from 'react-loader-spinner'
 
 const DetailRolePage = () => {
   const router = useRouter()
@@ -21,7 +22,19 @@ const DetailRolePage = () => {
     fetchPolicy: 'no-cache',
   })
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return (
+    <div className="flex flex-col justify-center items-center">
+      <Vortex
+        visible={true}
+        height="80"
+        width="80"
+        ariaLabel="vortex-loading"
+        wrapperStyle={{}}
+        wrapperClass="vortex-wrapper"
+        colors={['#1D4ED8', 'gray', '#1D4ED8', 'gray', '#1D4ED8', 'gray']}
+      />
+    </div>
+  )
   if (error) return <p>Oh no... {error.message}</p>
 
   const nodes = data?.roles.edges.map(({ node }: { node: Role }) => node)

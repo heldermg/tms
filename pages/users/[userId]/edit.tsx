@@ -6,6 +6,7 @@ import { Role, User } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { USERS_QUERY, USERS_QUERY_WITH_ROLES } from '../../api/query/users/users-queries'
 import { UserForm } from '../../../components/user/UserForm'
+import { Vortex } from 'react-loader-spinner'
 
 const EditUserPage = () => {
   const router = useRouter()
@@ -20,7 +21,19 @@ const EditUserPage = () => {
     fetchPolicy: 'no-cache',
   })
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return (
+    <div className="flex flex-col justify-center items-center">
+      <Vortex
+        visible={true}
+        height="80"
+        width="80"
+        ariaLabel="vortex-loading"
+        wrapperStyle={{}}
+        wrapperClass="vortex-wrapper"
+        colors={['#1D4ED8', 'gray', '#1D4ED8', 'gray', '#1D4ED8', 'gray']}
+      />
+    </div>
+  )
   if (error) return <p>Oh no... {error.message}</p>
 
   const nodes = data?.users.edges.map(({ node }: { node: User }) => node)

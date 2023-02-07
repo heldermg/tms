@@ -6,6 +6,7 @@ import { Team } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { TEAMS_QUERY } from '../../api/query/teams/teams-queries'
 import { TeamForm } from '../../../components/team/TeamForm'
+import { Vortex } from 'react-loader-spinner'
 
 const EditTeamPage = () => {
   const router = useRouter()
@@ -20,7 +21,19 @@ const EditTeamPage = () => {
     fetchPolicy: 'no-cache',
   })
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return (
+    <div className="flex flex-col justify-center items-center">
+      <Vortex
+        visible={true}
+        height="80"
+        width="80"
+        ariaLabel="vortex-loading"
+        wrapperStyle={{}}
+        wrapperClass="vortex-wrapper"
+        colors={['#1D4ED8', 'gray', '#1D4ED8', 'gray', '#1D4ED8', 'gray']}
+      />
+    </div>
+  )
   if (error) return <p>Oh no... {error.message}</p>
 
   const nodes = data?.teams.edges.map(({ node }: { node: Team }) => node)
