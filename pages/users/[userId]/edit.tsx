@@ -2,9 +2,9 @@
 import React from 'react'
 import { useQuery } from '@apollo/client'
 import toast from 'react-hot-toast'
-import { User } from '@prisma/client'
+import { Role, User } from '@prisma/client'
 import { useRouter } from 'next/router'
-import { USERS_QUERY } from '../../api/query/users/users-queries'
+import { USERS_QUERY, USERS_QUERY_WITH_ROLES } from '../../api/query/users/users-queries'
 import { UserForm } from '../../../components/user/UserForm'
 
 const EditUserPage = () => {
@@ -15,7 +15,7 @@ const EditUserPage = () => {
     toast.error('Id not informed')
   }
 
-  const { data, loading, error } = useQuery(USERS_QUERY, {
+  const { data, loading, error } = useQuery(USERS_QUERY_WITH_ROLES, {
     variables: { id: userId },
     fetchPolicy: 'no-cache',
   })
@@ -26,11 +26,13 @@ const EditUserPage = () => {
   const nodes = data?.users.edges.map(({ node }: { node: User }) => node)
   const user = nodes.shift()
 
-  console.log(user);
-  
+  const roles = user.roles.map((r: Role) => r.id)
 
   return (
-    <UserForm user={user} />
+    <UserForm 
+      user={user} 
+      roles={roles}
+    />
   )
 }
 

@@ -1,4 +1,6 @@
 // /graphql/types/User.ts
+import { Role } from '@prisma/client'
+import { disconnect } from 'process'
 import { prisma } from '../../lib/prisma'
 import { builder } from '../builder'
 
@@ -61,9 +63,10 @@ builder.mutationField('createUser', (t) =>
         required: true 
       }),
       image: t.arg.string(),
+      roles: t.arg.stringList()
     },
     resolve: async (query, _parent, args, ctx) => {
-      const { name, email, profile, image } = args
+      const { name, email, profile, image, roles } = args
 
       const user = await prisma.user.findUnique({
         where: {
@@ -75,13 +78,31 @@ builder.mutationField('createUser', (t) =>
         throw Error(`Error! User with email ${email} already exist.`)
       }
 
+      let rolesDb = []
+      if (roles) {
+        for (let roleId of roles) {
+          const r = await prisma.role.findUnique({
+            where: {
+              id: roleId
+            }
+          })
+          if (!r) {
+            throw Error(`Role with id ${roleId} does not exist!`)
+          }
+          rolesDb.push({ id: r.id })
+        }
+      }
+
       return prisma.user.create({
         ...query,
         data: {
           name,
           email,
           profile,
-          image
+          image,
+          roles: {
+            connect: rolesDb
+          }
         },
       })
     },
@@ -100,9 +121,10 @@ builder.mutationField('updateUser', (t) =>
         required: true 
       }),
       image: t.arg.string(),
+      roles: t.arg.stringList()
     },
     resolve: async (query, _parent, args, ctx) => {
-      const { id, name, email, profile, image } = args
+      const { id, name, email, profile, image, roles } = args
 
       if (!id) {
         throw Error('Error! Id not informed')
@@ -112,6 +134,13 @@ builder.mutationField('updateUser', (t) =>
         where: {
           id,
         },
+        include: {
+          roles: {
+            select: {
+              id: true,
+            },
+          }
+        }
       })
 
       if (!user) {
@@ -129,6 +158,23 @@ builder.mutationField('updateUser', (t) =>
         }
       }
 
+      let newRoles: any = []
+      if (roles) {
+        for (let roleId of roles) {
+          const r = await prisma.role.findUnique({
+            where: {
+              id: roleId
+            }
+          })
+          if (!r) {
+            throw Error(`Role with id ${roleId} does not exist!`)
+          }
+          newRoles.push({ id: r.id })
+        }
+      }
+      const rolesToDisconnect = user.roles
+        .filter(r => !newRoles.find((a: any) => a.id == r.id))
+
       return await prisma.user.update({
         where: {
           id,
@@ -137,7 +183,11 @@ builder.mutationField('updateUser', (t) =>
           name,
           email,
           profile,
-          image
+          image,
+          roles: {
+            connect: newRoles,
+            disconnect: rolesToDisconnect
+          }
         },
       })
     },

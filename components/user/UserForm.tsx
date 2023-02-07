@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client'
 import { getOperationName } from '@apollo/client/utilities'
-import { Profile, User } from '@prisma/client'
+import { Profile, Role, User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -16,13 +16,15 @@ type FormValues = {
   email: string
   profile: Profile
   image?: string
+  roles?: string[]
 }
 
 interface UserFormProps {
   user?: User
+  roles?: string[]
 }
 
-export const UserForm = ({ user }: UserFormProps) => {
+export const UserForm = ({ user, roles }: UserFormProps) => {
   const { id, name, email, profile, image } = user || {}
 
   const isEdit = id ? true : false
@@ -44,6 +46,7 @@ export const UserForm = ({ user }: UserFormProps) => {
       email,
       profile,
       image: image ? image : undefined,
+      roles: roles ? roles : undefined,
     }
   })
 
@@ -67,8 +70,11 @@ export const UserForm = ({ user }: UserFormProps) => {
   if (rolesError) return <p>Oh no... {rolesError.message}</p>
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const { name, email, profile, image } = data
-    const variables = { id: (isEdit ? id : null), name, email, profile, image }
+    const { name, email, profile, image, roles } = data
+    console.log(roles);
+    
+
+    const variables = { id: (isEdit ? id : null), name, email, profile, image, roles }
     try {
       if (isEdit) {
         await toast.promise(updateUser({ variables }), {
@@ -128,6 +134,22 @@ export const UserForm = ({ user }: UserFormProps) => {
               <option key={p} value={p}>{UserProfile[p as keyof typeof UserProfile]}</option>
             ))}
           </select>
+        </label>
+        <label className="block">
+          <span className="text-gray-700">Roles</span>
+          {rolesData?.roles?.edges.map(({ node }: { node: Role }) => (
+            <div key={node.id} className='text-gray-700'>
+              <label>
+                <input
+                  type="checkbox"
+                  placeholder="Roles"
+                  value={node.id}
+                  {...register('roles', { required: true })}
+                />
+                <span>&nbsp;{node.acronym} - {node.name}</span>
+              </label>
+            </div>
+          ))}
         </label>
         
         <button
