@@ -14,7 +14,7 @@ export const UserDetail = ({ user, userLoading }: UserDetailProps) => {
   return (
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
-      <h1 className="text-3xl font-medium my-5 text-center">Detail User {name}</h1>
+      <h1 className="text-3xl font-medium my-5 text-center">Detail User</h1>
       <div className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg">
         <label className="block">
           <span className="text-gray-700">Name</span>

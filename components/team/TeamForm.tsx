@@ -108,7 +108,7 @@ export const TeamForm = ({ team }: TeamFormProps) => {
   return (
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
-      <h1 className="text-3xl font-medium my-5 text-center">{formType} Team {name}</h1>
+      <h1 className="text-3xl font-medium my-5 text-center">{formType} Team</h1>
       <form
         className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg"
         onSubmit={handleSubmit(onSubmit)}
