@@ -42,8 +42,6 @@ builder.queryField('users', (t) =>
         })
 
       } else if (withoutTeam) {
-        console.log('withoutTeam');
-        
         users = await prisma.user.findMany({
           ...query,
           where: {
@@ -55,8 +53,6 @@ builder.queryField('users', (t) =>
         users = await prisma.user.findMany({ ...query })
       }
 
-      console.log('#### users');
-        console.log(users);
       return users
     },
   })

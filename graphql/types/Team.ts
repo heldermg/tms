@@ -100,11 +100,7 @@ builder.mutationField('createTeam', (t) =>
         }
       })
 
-      console.log('##### users');
-        console.log(users);
       if (users) {
-        
-        
         await prisma.user.updateMany({
           where: {
             id: {
