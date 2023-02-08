@@ -7,9 +7,10 @@ interface TeamDetailProps {
   manager: User
   teamLoading: boolean
   managerLoading: boolean
+  users?: User[]
 }
 
-export const TeamDetail = ({ team, teamLoading, manager, managerLoading }: TeamDetailProps) => {
+export const TeamDetail = ({ team, teamLoading, manager, managerLoading, users }: TeamDetailProps) => {
   const { id, name, managerId } = team
 
   return (
@@ -41,10 +42,20 @@ export const TeamDetail = ({ team, teamLoading, manager, managerLoading }: TeamD
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
               <option value={managerId}>
-                {manager.name}
+                {manager.name} - {manager.email}
               </option>
             </select>
           )}
+        </label>
+        <label className="block">
+          <span className="text-gray-700">Members</span>
+          {users?.map((node: User) => (
+            <div key={node.id} className='text-gray-700 ml-2'>
+              <label>
+                <span>&nbsp;{node.name} - {node.email}</span>
+              </label>
+            </div>
+          ))}
         </label>
 
         <div className="capitalize font-medium py-2 px-4 rounded-md">

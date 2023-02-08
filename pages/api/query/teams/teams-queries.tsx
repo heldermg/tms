@@ -17,6 +17,7 @@ export const TEAMS_QUERY = gql`
           members {
             id
             name
+            email
           }
         }
       }

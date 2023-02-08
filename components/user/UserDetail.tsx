@@ -55,7 +55,7 @@ export const UserDetail = ({ user, userLoading, roles }: UserDetailProps) => {
         <label className="block">
           <span className="text-gray-700">Roles</span>
           {roles?.map((node: Role) => (
-            <div key={node.id} className='text-gray-700'>
+            <div key={node.id} className='text-gray-700 ml-2'>
               <label>
                 <span>&nbsp;{node.acronym} - {node.name}</span>
               </label>

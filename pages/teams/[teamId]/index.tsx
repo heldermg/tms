@@ -59,6 +59,7 @@ const DetailTeamPage = () => {
   return (
     <TeamDetail 
       team={team} 
+      users={team.members}
       teamLoading={teamLoading} 
       manager={manager} 
       managerLoading={managerLoading} />
