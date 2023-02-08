@@ -39,13 +39,10 @@ builder.mutationField('createTeam', (t) =>
     args: {
       name: t.arg.string({ required: true }),
       managerId: t.arg.string({ required: true }),
+      users: t.arg.stringList(),
     },
     resolve: async (query, _parent, args, ctx) => {
-      const { name, managerId } = args
-
-      //if (!(await ctx).user) {
-      //  throw new Error("You have to be logged in to perform this action")
-      //}
+      const { name, managerId, users } = args
 
       const team = await prisma.team.findUnique({
         where: {
@@ -67,11 +64,30 @@ builder.mutationField('createTeam', (t) =>
         throw new GraphQLError(`Error! Manager not found.`)
       }
 
+      let usersDb: any = []
+      if (users) {
+        for (let userId of users) {
+          const u = await prisma.user.findUnique({
+            where: {
+              id: userId
+            }
+          })
+          if (!u) {
+            throw new GraphQLError(`User with id ${userId} does not exist!`)
+          }
+          usersDb.push({ id: u.id })
+        }
+        usersDb = usersDb.filter((u: any) => u.id != manager.id)
+      }
+
       const teamCreated = await prisma.team.create({
         ...query,
         data: {
           name,
           managerId,
+          members: {
+            connect: usersDb ? usersDb : undefined
+          }
         },
       })
 
@@ -83,6 +99,23 @@ builder.mutationField('createTeam', (t) =>
           teamId: teamCreated.id
         }
       })
+
+      console.log('##### users');
+        console.log(users);
+      if (users) {
+        
+        
+        await prisma.user.updateMany({
+          where: {
+            id: {
+              in: users
+            }
+          },
+          data: {
+            teamId: teamCreated.id
+          }
+        })
+      }
 
       return teamCreated
     },
@@ -96,9 +129,10 @@ builder.mutationField('updateTeam', (t) =>
       id: t.arg.string({ required: true }),
       name: t.arg.string({ required: true }),
       managerId: t.arg.string({ required: true }),
+      users: t.arg.stringList(),
     },
     resolve: async (query, _parent, args, ctx) => {
-      const { id, name, managerId } = args
+      const { id, name, managerId, users } = args
 
       if (!id) {
         throw new GraphQLError('Error! Id not informed')
@@ -108,6 +142,13 @@ builder.mutationField('updateTeam', (t) =>
         where: {
           id,
         },
+        include: {
+          members: {
+            select: {
+              id: true,
+            },
+          }
+        }
       })
 
       if (!team) {
@@ -153,6 +194,24 @@ builder.mutationField('updateTeam', (t) =>
         }
       })
 
+      let usersToConnect: any = []
+      if (users) {
+        for (let userId of users) {
+          const u = await prisma.user.findUnique({
+            where: {
+              id: userId
+            }
+          })
+          if (!u) {
+            throw new GraphQLError(`User with id ${userId} does not exist!`)
+          }
+          usersToConnect.push({ id: u.id })
+        }
+      }
+
+      const usersToDisconnect = team.members
+        .filter(m => usersToConnect.length > 0 && !usersToConnect.find((a: any) => a.id == m.id))
+
       return await prisma.team.update({
         where: {
           id,
@@ -160,6 +219,10 @@ builder.mutationField('updateTeam', (t) =>
         data: {
           name,
           managerId,
+          members: {
+            connect: usersToConnect,
+            disconnect: usersToDisconnect
+          }
         },
       })
     },

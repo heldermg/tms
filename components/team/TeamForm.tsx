@@ -39,7 +39,8 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
   } = useForm<FormValues>({
     defaultValues: {
       name,
-      managerId
+      managerId,
+      users: users ? users : undefined,
     }
   })
 
@@ -57,30 +58,19 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
     loading: usersLoading,
     error: usersError,
   } = useQuery(USERS_QUERY, {
-    variables: { withoutTeam: true },
+    variables: { 
+      withoutTeam: true, 
+      id: id ? id : undefined 
+    },
     fetchPolicy: 'no-cache',
   })
 
   if (usersError) return <p>Oh no... {usersError.message}</p>
 
-  const {
-    data: managerData,
-    loading: managerLoading,
-    error: managerError,
-  } = useQuery(USERS_QUERY, {
-    skip: !managerId,
-    variables: { id: managerId },
-    fetchPolicy: 'no-cache',
-  })
-
-  if (managerError) return <p>Oh no... {managerError.message}</p>
-
-  const managerNodes = managerData?.users.edges.map(({ node }: { node: User }) => node)
-  const manager = managerNodes?.shift()
-
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const { name, managerId } = data
-    const variables = { id: (isEdit ? id : null), name, managerId }
+    const { name, managerId, users } = data
+    const variables = { id: (isEdit ? id : null), name, managerId, users }
+
     try {
       if (isEdit) {
         await toast.promise(updateTeam({ variables }), {
@@ -120,26 +110,43 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
         </label>
         <label className="block">
           <span className="text-gray-700">Manager</span>
-          {usersLoading || managerLoading ? (
+          {usersLoading ? (
             <span>Loandig users</span>
           ) : (
             <select
-              required={false}
+              required={true}
               placeholder="Manager"
               {...register('managerId', { required: true })}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             >
-              {manager &&
-                <option key={manager.id} value={manager.id}>
-                  {manager.name}
-                </option>
-              }
               {usersData?.users.edges.map(({ node }: { node: User }) => (
                 <option key={node.id} value={node.id}>
-                  {node.name}
+                  {node.name} - {node.email}
                 </option>
               ))}
             </select>
+          )}
+        </label>
+        <label className="block">
+          <span className="text-gray-700">Members</span>
+          {usersLoading ? (
+            <span>Loandig users</span>
+          ) : (
+            <span>
+            {usersData?.users?.edges.map(({ node }: { node: User }) => (
+              <div key={node.id} className='text-gray-700'>
+                <label>
+                  <input
+                    type="checkbox"
+                    placeholder="Users"
+                    value={node.id}
+                    {...register('users', { required: false })}
+                  />
+                  <span>&nbsp;{node.name} - {node.email}</span>
+                </label>
+              </div>
+            ))}
+            </span>
           )}
         </label>
         

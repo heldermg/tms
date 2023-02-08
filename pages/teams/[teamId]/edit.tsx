@@ -2,7 +2,7 @@
 import React from 'react'
 import { useQuery } from '@apollo/client'
 import toast from 'react-hot-toast'
-import { Team } from '@prisma/client'
+import { Team, User } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { TEAMS_QUERY } from '../../api/query/teams/teams-queries'
 import { TeamForm } from '../../../components/team/TeamForm'
@@ -39,11 +39,13 @@ const EditTeamPage = () => {
   const nodes = data?.teams.edges.map(({ node }: { node: Team }) => node)
   const team = nodes.shift()
 
-  console.log(team);
-  
+  const users = team.members.map((t: User) => t.id)
 
   return (
-    <TeamForm team={team} />
+    <TeamForm 
+      team={team}
+      users={users}
+    />
   )
 }
 

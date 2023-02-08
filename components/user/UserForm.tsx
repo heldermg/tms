@@ -70,10 +70,8 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const { name, email, profile, image, roles } = data
-    console.log(roles);
-    
-
     const variables = { id: (isEdit ? id : null), name, email, profile, image, roles }
+
     try {
       if (isEdit) {
         await toast.promise(updateUser({ variables }), {

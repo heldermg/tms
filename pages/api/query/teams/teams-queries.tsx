@@ -25,8 +25,12 @@ export const TEAMS_QUERY = gql`
 `
 
 export const TEAMS_CREATE_MUTATION = gql`
-  mutation createTeam($name: String!, $managerId: String!) {
-    createTeam(name: $name, managerId: $managerId) {
+  mutation createTeam(
+    $name: String!, 
+    $managerId: String!,
+    $users: [String!],
+  ) {
+    createTeam(name: $name, managerId: $managerId, users: $users) {
       name
       managerId
     }
@@ -38,8 +42,9 @@ export const TEAMS_UPDATE_MUTATION = gql`
     $id: String!,
     $name: String!,
     $managerId: String!,
+    $users: [String!],
   ) {
-    updateTeam(id: $id, name: $name, managerId: $managerId) {
+    updateTeam(id: $id, name: $name, managerId: $managerId, users: $users) {
       name
       managerId
     }

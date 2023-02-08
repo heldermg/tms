@@ -33,19 +33,30 @@ builder.queryField('users', (t) =>
       const { id, withoutTeam } = args
 
       let users
-      if (id) {
-        users = await prisma.user.findMany({ ...query, where: { id } })
+      if (id && !withoutTeam) {
+        users = await prisma.user.findMany({ 
+          ...query, 
+          where: { 
+            id 
+          } 
+        })
+
       } else if (withoutTeam) {
+        console.log('withoutTeam');
+        
         users = await prisma.user.findMany({
           ...query,
           where: {
-            teamId: null,
+            OR: [ { teamId: null, }, { teamId: id } ]
           },
         })
+
       } else {
         users = await prisma.user.findMany({ ...query })
       }
 
+      console.log('#### users');
+        console.log(users);
       return users
     },
   })
