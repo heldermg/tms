@@ -21,19 +21,20 @@ enum Profile {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  name         String   @db.VarChar(100)
-  email        String   @unique @db.VarChar(50)
+  id           String    @id @default(uuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  name         String    @db.VarChar(100)
+  email        String    @unique @db.VarChar(50)
   image        String?
-  profile      Profile  @default(TEAM_MEMBER)
+  profile      Profile   @default(TEAM_MEMBER)
   roles        Role[]
-  teamsManaged Team[]   @relation(name: "TeamManager")
-  team         Team?    @relation(name: "TeamMembers", fields: [teamId], references: [id])
+  teamsManaged Team[]    @relation(name: "TeamManager")
+  team         Team?     @relation(name: "TeamMembers", fields: [teamId], references: [id])
   teamId       String?
+  absences     Absence[] @relation(name: "UserRelation")
 
-  @@map("user") 
+  @@map("user")
 }
 
 model Team {
@@ -45,7 +46,7 @@ model Team {
   manager   User     @relation(name: "TeamManager", fields: [managerId], references: [id])
   managerId String
 
-  @@map("team") 
+  @@map("team")
 }
 
 model Role {
@@ -58,4 +59,34 @@ model Role {
   users       User[]
 
   @@map("role")
+}
+
+model AbsenceType {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String    @unique @db.VarChar(30)
+  description String    @db.VarChar(200)
+  absences    Absence[] @relation(name: "AbsenceRelation")
+
+  @@map("absence_type")
+}
+
+model Absence {
+  id            String      @id @default(uuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  title         String      @db.VarChar(30)
+  description   String      @db.VarChar(200)
+  startDateAt   DateTime    @db.Date
+  endDateAt     DateTime    @db.Date
+  startTimeAt   DateTime    @db.Time()
+  endTimeAt     DateTime    @db.Time()
+  isAllDay      Boolean
+  user          User        @relation(name: "UserRelation", fields: [userId], references: [id])
+  userId        String
+  absenceType   AbsenceType @relation(name: "AbsenceRelation", fields: [absenceTypeId], references: [id])
+  absenceTypeId String
+
+  @@map("absence")
 }

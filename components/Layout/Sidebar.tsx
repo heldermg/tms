@@ -2,63 +2,9 @@ import classNames from 'classnames'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useState, useMemo } from 'react'
-import CollapseIcon from './icons/CollapseIcon'
-import SvgIcon from './icons/SvgIcon'
-
-const menuItems = [
-  {
-    id: 1,
-    href: '/',
-    title: 'Home',
-    icon: (
-      <SvgIcon
-        iconType="home"
-        title="Home"
-        desc="Home Button"
-        className="w-10 h-10"
-      />
-    ),
-  },
-  {
-    id: 2,
-    href: '/roles',
-    title: 'Roles',
-    icon: (
-      <SvgIcon
-        iconType="newspaper"
-        title="Roles"
-        desc="Roles Button"
-        className="w-10 h-10"
-      />
-    ),
-  },
-  {
-    id: 3,
-    href: '/teams',
-    title: 'Teams',
-    icon: (
-      <SvgIcon
-        iconType="user-group"
-        title="Teams"
-        desc="Teams Button"
-        className="w-10 h-10"
-      />
-    ),
-  },
-  {
-    id: 4,
-    href: '/users',
-    title: 'Users',
-    icon: (
-      <SvgIcon
-        iconType="users"
-        title="Users"
-        desc="Users Button"
-        className="w-10 h-10"
-      />
-    ),
-  },
-]
+import CollapseIcon from '../icons/CollapseIcon'
+import SvgIcon from '../icons/SvgIcon'
+import { menuItems } from './menu-itens'
 
 const Sidebar = () => {
   const [toggleCollapse, setToggleCollapse] = useState(false)
@@ -151,7 +97,7 @@ const Sidebar = () => {
                     {!toggleCollapse && (
                       <span
                         className={classNames(
-                          'text-md font-medium text-text-light'
+                          'text-md font-medium text-text-light ml-1'
                         )}
                       >
                         {menu.title}
