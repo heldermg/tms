@@ -1,12 +1,14 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
 import { Profile, Role, User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast, Toaster } from 'react-hot-toast'
 import { ROLES_QUERY } from '../../pages/api/query/roles/roles-queries'
-import { USERS_CREATE_MUTATION, USERS_UPDATE_MUTATION } from '../../pages/api/query/users/users-queries'
+import {
+  USERS_CREATE_MUTATION,
+  USERS_UPDATE_MUTATION,
+} from '../../pages/api/query/users/users-queries'
 import { FormType } from '../form-util'
 import SvgIcon from '../icons/SvgIcon'
 import { UserProfile } from './UserProfile'
@@ -30,8 +32,8 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
   const isEdit = id ? true : false
   const formType: FormType = id ? FormType.EDIT : FormType.NEW
 
-  const buttonLabel = isEdit ? "Update User" : "Create new User"
-  const loadingButtonLabel = isEdit ? "Updating..." : "Creating..."
+  const buttonLabel = isEdit ? 'Update User' : 'Create new User'
+  const loadingButtonLabel = isEdit ? 'Updating...' : 'Creating...'
 
   const {
     register,
@@ -46,17 +48,19 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
       profile,
       image: image ? image : undefined,
       roles: roles ? roles : undefined,
-    }
+    },
   })
 
-  const [updateUser, { loading: loadingUpdate, error: errorUpdate }] = useMutation(USERS_UPDATE_MUTATION, {
-    refetchQueries: [{ query: ROLES_QUERY }, getOperationName(ROLES_QUERY)!]
-  })
+  const [updateUser, { loading: loadingUpdate, error: errorUpdate }] =
+    useMutation(USERS_UPDATE_MUTATION, {
+      refetchQueries: [{ query: ROLES_QUERY }],
+    })
 
-  const [createUser, { loading: loadingCreate, error:errorCreate }] = useMutation(USERS_CREATE_MUTATION, {
-    onCompleted: () => reset(),
-    refetchQueries: [{ query: ROLES_QUERY }, getOperationName(ROLES_QUERY)!]
-  })
+  const [createUser, { loading: loadingCreate, error: errorCreate }] =
+    useMutation(USERS_CREATE_MUTATION, {
+      onCompleted: () => reset(),
+      refetchQueries: [{ query: ROLES_QUERY }],
+    })
 
   const {
     data: rolesData,
@@ -70,7 +74,14 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const { name, email, profile, image, roles } = data
-    const variables = { id: (isEdit ? id : null), name, email, profile, image, roles }
+    const variables = {
+      id: isEdit ? id : null,
+      name,
+      email,
+      profile,
+      image,
+      roles,
+    }
 
     try {
       if (isEdit) {
@@ -90,7 +101,7 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
       console.error(error?.message)
     }
   }
-  
+
   return (
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
@@ -127,15 +138,17 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
             {...register('profile', { required: true })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           >
-            {Object.keys(UserProfile).map(p => (
-              <option key={p} value={p}>{UserProfile[p as keyof typeof UserProfile]}</option>
+            {Object.keys(UserProfile).map((p) => (
+              <option key={p} value={p}>
+                {UserProfile[p as keyof typeof UserProfile]}
+              </option>
             ))}
           </select>
         </label>
         <label className="block">
           <span className="text-gray-700">Roles</span>
           {rolesData?.roles?.edges.map(({ node }: { node: Role }) => (
-            <div key={node.id} className='text-gray-700'>
+            <div key={node.id} className="text-gray-700">
               <label>
                 <input
                   type="checkbox"
@@ -143,12 +156,14 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
                   value={node.id}
                   {...register('roles', { required: true })}
                 />
-                <span>&nbsp;{node.acronym} - {node.name}</span>
+                <span>
+                  &nbsp;{node.acronym} - {node.name}
+                </span>
               </label>
             </div>
           ))}
         </label>
-        
+
         <button
           disabled={loadingCreate || loadingUpdate}
           type="submit"
@@ -157,10 +172,10 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
           {loadingCreate || loadingUpdate ? (
             <span className="flex items-center justify-center">
               <SvgIcon
-                iconType='animate-spin'
-                className='w-6 h-6 animate-spin mr-1'
-                title='Animate Spin'
-                desc='Animate Spin Updating'
+                iconType="animate-spin"
+                className="w-6 h-6 animate-spin mr-1"
+                title="Animate Spin"
+                desc="Animate Spin Updating"
               />
               <span>{loadingButtonLabel}</span>
             </span>

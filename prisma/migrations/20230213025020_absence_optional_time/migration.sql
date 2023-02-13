@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "absence" ALTER COLUMN "startTimeAt" DROP NOT NULL,
+ALTER COLUMN "endTimeAt" DROP NOT NULL;

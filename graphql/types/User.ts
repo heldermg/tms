@@ -28,32 +28,39 @@ builder.queryField('users', (t) =>
     args: {
       id: t.arg.string(),
       withoutTeam: t.arg.boolean(),
+      onlyWithTeam: t.arg.boolean(),
     },
     resolve: async (query, _parent, args, _ctx, _info) => {
-      const { id, withoutTeam } = args
+      const { id, withoutTeam, onlyWithTeam } = args
 
-      let users
-      if (id && !withoutTeam) {
-        users = await prisma.user.findMany({ 
-          ...query, 
-          where: { 
-            id 
-          } 
-        })
-
-      } else if (withoutTeam) {
-        users = await prisma.user.findMany({
+      if (withoutTeam) {
+        return await prisma.user.findMany({
           ...query,
           where: {
             OR: [ { teamId: null, }, { teamId: id } ]
           },
         })
-
-      } else {
-        users = await prisma.user.findMany({ ...query })
       }
 
-      return users
+      if (onlyWithTeam) {
+        return await prisma.user.findMany({
+          ...query,
+          where: {
+            NOT: [ { teamId: null, } ]
+          },
+        })
+      }
+
+      if (id) {
+        return await prisma.user.findMany({ 
+          ...query, 
+          where: { 
+            id 
+          } 
+        })
+      }
+
+      return await prisma.user.findMany({ ...query })
     },
   })
 )

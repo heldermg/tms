@@ -5,7 +5,11 @@ import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast, Toaster } from 'react-hot-toast'
-import { TEAMS_CREATE_MUTATION, TEAMS_QUERY, TEAMS_UPDATE_MUTATION } from '../../pages/api/query/teams/teams-queries'
+import {
+  TEAMS_CREATE_MUTATION,
+  TEAMS_QUERY,
+  TEAMS_UPDATE_MUTATION,
+} from '../../pages/api/query/teams/teams-queries'
 import { USERS_QUERY } from '../../pages/api/query/users/users-queries'
 import { FormType } from '../form-util'
 import SvgIcon from '../icons/SvgIcon'
@@ -27,8 +31,8 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
   const isEdit = id ? true : false
   let formType: FormType = id ? FormType.EDIT : FormType.NEW
 
-  const buttonLabel = isEdit ? "Update Team" : "Create new Team"
-  const loadingButtonLabel = isEdit ? "Updating..." : "Creating..."
+  const buttonLabel = isEdit ? 'Update Team' : 'Create new Team'
+  const loadingButtonLabel = isEdit ? 'Updating...' : 'Creating...'
 
   const {
     register,
@@ -41,26 +45,27 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
       name,
       managerId,
       users: users ? users : undefined,
-    }
+    },
   })
 
-  const [updateTeam, { loading: loadingUpdate, error: errorUpdate }] = useMutation(TEAMS_UPDATE_MUTATION, {
-    refetchQueries: [{ query: TEAMS_QUERY }, getOperationName(TEAMS_QUERY)!]
-  })
+  const [createTeam, { loading: loadingCreate, error: errorCreate }] =
+    useMutation(TEAMS_CREATE_MUTATION, {
+      onCompleted: () => reset(),
+      refetchQueries: [{ query: USERS_QUERY }],
+    })
 
-  const [createTeam, { loading: loadingCreate, error:errorCreate }] = useMutation(TEAMS_CREATE_MUTATION, {
-    onCompleted: () => reset(),
-    refetchQueries: [{ query: USERS_QUERY }, getOperationName(USERS_QUERY)!]
-  })
+  const [updateTeam, { loading: loadingUpdate, error: errorUpdate }] =
+    useMutation(TEAMS_UPDATE_MUTATION, {
+      refetchQueries: [{ query: TEAMS_QUERY }],
+    })
 
   const {
     data: usersData,
     loading: usersLoading,
     error: usersError,
   } = useQuery(USERS_QUERY, {
-    variables: { 
-      withoutTeam: true, 
-      id: id ? id : undefined 
+    variables: {
+      withoutTeam: true,
     },
     fetchPolicy: 'no-cache',
   })
@@ -69,7 +74,7 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const { name, managerId, users } = data
-    const variables = { id: (isEdit ? id : null), name, managerId, users }
+    const variables = { id: isEdit ? id : null, name, managerId, users }
 
     try {
       if (isEdit) {
@@ -89,7 +94,7 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
       console.error(error?.message)
     }
   }
-  
+
   return (
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
@@ -133,23 +138,25 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
             <span>Loandig users</span>
           ) : (
             <span>
-            {usersData?.users?.edges.map(({ node }: { node: User }) => (
-              <div key={node.id} className='text-gray-700'>
-                <label>
-                  <input
-                    type="checkbox"
-                    placeholder="Users"
-                    value={node.id}
-                    {...register('users', { required: false })}
-                  />
-                  <span>&nbsp;{node.name} - {node.email}</span>
-                </label>
-              </div>
-            ))}
+              {usersData?.users?.edges.map(({ node }: { node: User }) => (
+                <div key={node.id} className="text-gray-700">
+                  <label>
+                    <input
+                      type="checkbox"
+                      placeholder="Users"
+                      value={node.id}
+                      {...register('users', { required: false })}
+                    />
+                    <span>
+                      &nbsp;{node.name} - {node.email}
+                    </span>
+                  </label>
+                </div>
+              ))}
             </span>
           )}
         </label>
-        
+
         <button
           disabled={loadingCreate || loadingUpdate}
           type="submit"
@@ -158,10 +165,10 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
           {loadingCreate || loadingUpdate ? (
             <span className="flex items-center justify-center">
               <SvgIcon
-                iconType='animate-spin'
-                className='w-6 h-6 animate-spin mr-1'
-                title='Animate Spin'
-                desc='Animate Spin Updating'
+                iconType="animate-spin"
+                className="w-6 h-6 animate-spin mr-1"
+                title="Animate Spin"
+                desc="Animate Spin Updating"
               />
               <span>{loadingButtonLabel}</span>
             </span>

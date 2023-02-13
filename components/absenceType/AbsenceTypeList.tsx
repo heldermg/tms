@@ -101,7 +101,8 @@ export const AbsenceTypeList = ({ absenceTypes }: any) => {
         </tbody>
         <tfoot>
           <tr>
-            <td colSpan={4}>
+            <td></td>
+            <td colSpan={2}>
               <div className="flex flex-row justify-end">
                 <Link href={`/absenceTypes/new`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">

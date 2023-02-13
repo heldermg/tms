@@ -1,4 +1,4 @@
-// /pages/api/query/absenceType/absenceType-queries.tsx
+// /pages/api/query/absences/absences-queries.tsx
 import { gql } from '@apollo/client'
 
 export const ABSENCE_QUERY = gql`
@@ -14,36 +14,89 @@ export const ABSENCE_QUERY = gql`
           id
           title
           description
+          startDateAt
+          endDateAt
+          user {
+            id
+            name
+          }
+          absenceType {
+            id
+            name
+          }
         }
       }
     }
   }
 `
 
-/*export const ABSENCE_CREATE_MUTATION = gql`
+export const ABSENCE_CREATE_MUTATION = gql`
   mutation createAbsence(
     $title: String!
     $description: String!
+    $startDateAt: Date!
+    $endDateAt: Date!
+    $startTimeAt: Date
+    $endTimeAt: Date
+    $userId: String!
+    $absenceTypeId: String!
   ) {
-    createAbsence(title: $title, description: $description) {
+    createAbsence(
+      title: $title
+      description: $description
+      startDateAt: $startDateAt
+      endDateAt: $endDateAt
+      startTimeAt: $startTimeAt
+      endTimeAt: $endTimeAt
+      userId: $userId
+      absenceTypeId: $absenceTypeId
+    ) {
       title
       description
+      startDateAt
+      endDateAt
+      isAllDay
+      userId
+      absenceTypeId
     }
   }
-`*/
+`
 
-/*export const ABSENCE_UPDATE_MUTATION = gql`
+export const ABSENCE_UPDATE_MUTATION = gql`
   mutation updateAbsence(
     $id: String!
     $title: String!
     $description: String!
+    $startDateAt: Date!
+    $endDateAt: Date!
+    $startTimeAt: Date
+    $endTimeAt: Date
+    $userId: String!
+    $absenceTypeId: String!
   ) {
-    updateAbsence(id: $id, title: $title, description: $description) {
+    updateAbsence(
+      id: $id, 
+      title: $title
+      description: $description
+      startDateAt: $startDateAt
+      endDateAt: $endDateAt
+      startTimeAt: $startTimeAt
+      endTimeAt: $endTimeAt
+      userId: $userId
+      absenceTypeId: $absenceTypeId  
+    ) {
       title
       description
+      startDateAt
+      endDateAt
+      startTimeAt
+      endTimeAt
+      isAllDay
+      userId
+      absenceTypeId
     }
   }
-`*/
+`
 
 export const ABSENCE_DELETE_MUTATION = gql`
   mutation deleteAbsence($id: String!) {

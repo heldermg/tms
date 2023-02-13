@@ -1,12 +1,12 @@
-// pages/absenceTypes/new.tsx
+// pages/absences/new.tsx
 import React from 'react'
-import { AbsenceTypeForm } from '../../components/absenceType/AbsenceTypeForm'
+import { AbsenceForm } from '../../components/absence/AbsenceForm'
 
-const AbsenceTypeNewPage = () => {
-  return <AbsenceTypeForm />
+const AbsenceNewPage = () => {
+  return <AbsenceForm />
 }
 
-export default AbsenceTypeNewPage
+export default AbsenceNewPage
 
 /*export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getSession(req, res);
