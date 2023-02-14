@@ -16,6 +16,7 @@ import { ABSENCE_TYPE_QUERY } from '../../pages/api/query/absenceTypes/absenceTy
 import 'react-datepicker/dist/react-datepicker.css'
 import DatePicker, { registerLocale } from 'react-datepicker'
 import ptBR from 'date-fns/locale/pt-BR'
+import { getOperationName } from '@apollo/client/utilities'
 registerLocale('pt-BR', ptBR)
 
 type FormValues = {
@@ -82,14 +83,14 @@ export const AbsenceForm = ({
     ABSENCE_CREATE_MUTATION,
     {
       onCompleted: () => reset(),
-      refetchQueries: [{ query: USERS_QUERY }, { query: ABSENCE_TYPE_QUERY }],
+      refetchQueries: [getOperationName(USERS_QUERY)!, getOperationName(ABSENCE_TYPE_QUERY)!],
     }
   )
 
   const [updateAbsence, { loading: loadingUpdate }] = useMutation(
     ABSENCE_UPDATE_MUTATION,
     {
-      refetchQueries: [{ query: ABSENCE_QUERY }],
+      refetchQueries: [getOperationName(ABSENCE_QUERY)!],
     }
   )
 
@@ -158,10 +159,34 @@ export const AbsenceForm = ({
     }
   }
 
+  function sanitizeTime(oldTime: any) {
+    const regex = /^\d\d:\d\d:\d\d.\d\d\dZ/i
+
+    if (oldTime && oldTime.value && regex.test(oldTime.value)) {
+      console.log('Time')
+      const value = oldTime.value
+      const hours = value.substring(0, 2)
+      const minutes = value.substring(3, 5)
+
+      const newTime = new Date(1970, 0, 1)
+      newTime.setHours(+hours)
+      newTime.setMinutes(+minutes)
+      newTime.setSeconds(0)
+      console.log(newTime)
+      
+      oldTime.onChange(newTime)
+      return newTime
+    }
+    return oldTime?.value
+  }
+
   function sanitizeDateOffset(oldDate: any) {
-    const newDate = new Date(oldDate)
-    newDate.setMinutes(newDate.getMinutes() + newDate.getTimezoneOffset())
-    return newDate
+    if (oldDate) {
+      const newDate = new Date(oldDate)
+      newDate.setMinutes(newDate.getMinutes() + newDate.getTimezoneOffset())
+      return newDate
+    }
+    return oldDate
   }
 
   return (
@@ -279,11 +304,11 @@ export const AbsenceForm = ({
         <span className="flex flex-row">
           <span className="block">
             <span className="text-gray-700">Start Time</span>
-            {/*<Controller
+            <Controller
               control={control}
               name="startTimeAt"
               render={({ field }) => (
-                <ReactDatePicker
+                <DatePicker
                   className="w-2/3"
                   showTimeSelect={true}
                   showTimeSelectOnly={true}
@@ -292,19 +317,20 @@ export const AbsenceForm = ({
                   timeIntervals={15}
                   placeholderText="HH:mm"
                   onChange={(date: any) => field.onChange(date)}
-                  selected={field.value}
+                  selected={sanitizeTime(field)}
                   dateFormat="HH:mm"
+                  locale="pt-BR"
               />
               )}
-            />*/}
+            />
           </span>
           <span className="block">
             <span className="text-gray-700">End Time</span>
-            {/*<Controller
+            <Controller
               control={control}
               name="endTimeAt"
               render={({ field }) => (
-                <ReactDatePicker
+                <DatePicker
                   className="w-2/3"
                   showTimeSelect={true}
                   showTimeSelectOnly={true}
@@ -313,11 +339,12 @@ export const AbsenceForm = ({
                   timeIntervals={15}
                   placeholderText="HH:mm"
                   onChange={(date: any) => field.onChange(date)}
-                  selected={field.value}
+                  selected={sanitizeTime(field)}
                   dateFormat="HH:mm"
+                  locale="pt-BR"
                 />
               )}
-              />*/}
+            />
           </span>
         </span>
 

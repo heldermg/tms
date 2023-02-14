@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
 import { User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -12,7 +13,7 @@ import { UserProfile } from './UserProfile'
 
 export const UserList = ({ users }: any) => {
   const [deleteUser, { loading }] = useMutation(USERS_DELETE_MUTATION, {
-    refetchQueries: [{ query: USERS_QUERY }],
+    refetchQueries: [getOperationName(USERS_QUERY)!],
   })
 
   async function handleDeleteUser(id: string) {

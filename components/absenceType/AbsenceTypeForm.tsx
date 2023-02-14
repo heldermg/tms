@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
 import { AbsenceType } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -51,7 +52,7 @@ export const AbsenceTypeForm = ({ absenceType }: AbsenceTypeFormProps) => {
   const [updateAbsenceType, { loading: loadingUpdate }] = useMutation(
     ABSENCE_TYPE_UPDATE_MUTATION,
     {
-      refetchQueries: [{ query: ABSENCE_TYPE_QUERY }],
+      refetchQueries: [getOperationName(ABSENCE_TYPE_QUERY)!],
     }
   )
 

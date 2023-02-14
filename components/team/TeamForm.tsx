@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
 import { Team, User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -45,14 +46,14 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
     TEAMS_CREATE_MUTATION,
     {
       onCompleted: () => reset(),
-      refetchQueries: [{ query: USERS_QUERY }],
+      refetchQueries: [getOperationName(USERS_QUERY)!],
     }
   )
 
   const [updateTeam, { loading: loadingUpdate }] = useMutation(
     TEAMS_UPDATE_MUTATION,
     {
-      refetchQueries: [{ query: TEAMS_QUERY }],
+      refetchQueries: [getOperationName(TEAMS_QUERY)!],
     }
   )
 

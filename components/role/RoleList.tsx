@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
 import { Role } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -11,7 +12,7 @@ import SvgIcon from '../icons/SvgIcon'
 
 export const RoleList = ({ roles }: any) => {
   const [deleteRole, { loading }] = useMutation(ROLES_DELETE_MUTATION, {
-    refetchQueries: [{ query: ROLES_QUERY }],
+    refetchQueries: [getOperationName(ROLES_QUERY)!],
   })
 
   async function handleDeleteRole(id: string) {

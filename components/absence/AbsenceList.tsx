@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import React from 'react'
@@ -11,7 +12,7 @@ import SvgIcon from '../icons/SvgIcon'
 
 export const AbsenceList = ({ absences }: any) => {
   const [deleteAbsence, { loading }] = useMutation(ABSENCE_DELETE_MUTATION, {
-    refetchQueries: [{ query: ABSENCE_QUERY }],
+    refetchQueries: [getOperationName(ABSENCE_QUERY)!],
   })
 
   async function handleDeleteAbsence(id: string) {

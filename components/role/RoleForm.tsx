@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
 import { Role } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -53,7 +54,7 @@ export const RoleForm = ({ role }: RoleFormProps) => {
   const [updateRole, { loading: loadingUpdate }] = useMutation(
     ROLES_UPDATE_MUTATION,
     {
-      refetchQueries: [{ query: ROLES_QUERY }],
+      refetchQueries: [getOperationName(ROLES_QUERY)!],
     }
   )
 

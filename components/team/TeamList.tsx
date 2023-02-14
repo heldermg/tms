@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
 import { User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -12,7 +13,7 @@ import SvgIcon from '../icons/SvgIcon'
 export const TeamList = ({ teams }: any) => {
 
   const [deleteTeam, { loading }] = useMutation(TEAMS_DELETE_MUTATION, {
-    refetchQueries: [{ query: TEAMS_QUERY }],
+    refetchQueries: [getOperationName(TEAMS_QUERY)!],
   })
 
   async function handleDeleteTeam(id: string) {

@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client'
+import { getOperationName } from '@apollo/client/utilities'
 import { Profile, Role, User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -49,14 +50,14 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
     USERS_CREATE_MUTATION,
     {
       onCompleted: () => reset(),
-      refetchQueries: [{ query: ROLES_QUERY }],
+      refetchQueries: [getOperationName(ROLES_QUERY)!],
     }
   )
 
   const [updateUser, { loading: loadingUpdate }] = useMutation(
     USERS_UPDATE_MUTATION,
     {
-      refetchQueries: [{ query: ROLES_QUERY }],
+      refetchQueries: [getOperationName(ROLES_QUERY)!],
     }
   )
 

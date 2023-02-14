@@ -1,3 +1,4 @@
+// @ts-nocheck
 // /graphql/types/Absence.ts
 import { GraphQLError } from 'graphql'
 import { prisma } from '../../lib/prisma'
@@ -31,16 +32,19 @@ builder.queryField('absences', (t) =>
       const { id } = args
 
       if (id) {
-        const absences = await prisma.absence.findMany({
+        const absenceById = await prisma.absence.findMany({
           where: {
             id,
           },
         })
 
-        return absences
+        console.log('absences');
+        console.log(absenceById);
+
+        return absenceById
       }
 
-      return await prisma.absence.findMany({
+       const absences = await prisma.absence.findMany({
         ...query,
         orderBy: [
           {
@@ -51,6 +55,8 @@ builder.queryField('absences', (t) =>
           }
         ]
       })
+
+      return absences
     },
   })
 )
@@ -82,6 +88,8 @@ builder.mutationField('createAbsence', (t) =>
 
       const newStartDateAt = new Date(Date.parse(startDateAt.toUTCString()) - startDateAt.getTimezoneOffset() * 60000)
       const newEndDateAt = new Date(Date.parse(endDateAt.toUTCString()) - endDateAt.getTimezoneOffset() * 60000)
+      const newStartTimeAt = startTimeAt ? new Date(Date.parse(startTimeAt.toUTCString()) - startTimeAt.getTimezoneOffset() * 60000) : null
+      const newEndTimeAt = endTimeAt ? new Date(Date.parse(endTimeAt.toUTCString()) - endTimeAt.getTimezoneOffset() * 60000) : null
 
       const isAllDay: boolean = startTimeAt && endTimeAt ? false : true
 
@@ -92,8 +100,8 @@ builder.mutationField('createAbsence', (t) =>
           description,
           startDateAt: newStartDateAt,
           endDateAt: newEndDateAt,
-          startTimeAt,
-          endTimeAt,
+          startTimeAt: newStartTimeAt,
+          endTimeAt: newEndTimeAt,
           isAllDay,
           userId,
           absenceTypeId,
@@ -130,6 +138,11 @@ builder.mutationField('updateAbsence', (t) =>
         absenceTypeId,
       } = args
 
+      const newStartDateAt = startDateAt.getHours() == 0 ? new Date(Date.parse(startDateAt.toUTCString()) - startDateAt.getTimezoneOffset() * 60000) : startDateAt
+      const newEndDateAt = endDateAt.getHours() == 0 ? new Date(Date.parse(endDateAt.toUTCString()) - endDateAt.getTimezoneOffset() * 60000) : endDateAt
+      const newStartTimeAt = startTimeAt ? new Date(Date.parse(startTimeAt.toUTCString()) - startTimeAt.getTimezoneOffset() * 60000) : null
+      const newEndTimeAt = endTimeAt ? new Date(Date.parse(endTimeAt.toUTCString()) - endTimeAt.getTimezoneOffset() * 60000) : null
+
       const isAllDay: boolean = startTimeAt && endTimeAt ? false : true
 
       return await prisma.absence.update({
@@ -139,10 +152,10 @@ builder.mutationField('updateAbsence', (t) =>
         data: {
           title,
           description,
-          startDateAt,
-          endDateAt,
-          startTimeAt: startTimeAt ? startTimeAt : null,
-          endTimeAt: endTimeAt ? endTimeAt : null,
+          startDateAt: newStartDateAt,
+          endDateAt: newEndDateAt,
+          startTimeAt: newStartTimeAt,
+          endTimeAt: newEndTimeAt,
           isAllDay,
           userId,
           absenceTypeId,
