@@ -24,11 +24,16 @@ builder.queryField('teams', (t) =>
     resolve: async (query, _parent, args, _ctx, _info) => {
       const { id } = args
 
-      const teams = id 
-        ? await prisma.team.findMany({ ...query, where: { id } })
-        : await prisma.team.findMany({ ...query })
+      if (id) {
+        return await prisma.team.findMany({ 
+          ...query, 
+          where: { 
+            id 
+          } 
+        })
+      }
 
-        return teams
+      return await prisma.team.findMany({ ...query })
     },
   })
 )

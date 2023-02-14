@@ -1,8 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
-import { Absence } from '@prisma/client'
-import { format, formatISO, parseISO, toDate } from 'date-fns'
-import moment from 'moment'
+import { format } from 'date-fns'
 import Link from 'next/link'
 import React from 'react'
 import toast, { Toaster } from 'react-hot-toast'
@@ -13,15 +10,9 @@ import {
 import SvgIcon from '../icons/SvgIcon'
 
 export const AbsenceList = ({ absences }: any) => {
-  const [deleteAbsence, { loading, error }] = useMutation(
-    ABSENCE_DELETE_MUTATION,
-    {
-      refetchQueries: [
-        { query: ABSENCE_QUERY },
-        getOperationName(ABSENCE_QUERY)!,
-      ],
-    }
-  )
+  const [deleteAbsence, { loading }] = useMutation(ABSENCE_DELETE_MUTATION, {
+    refetchQueries: [{ query: ABSENCE_QUERY }],
+  })
 
   async function handleDeleteAbsence(id: string) {
     const variables = { id }
@@ -71,8 +62,12 @@ export const AbsenceList = ({ absences }: any) => {
               <td className="px-6 py-4">{node.title}</td>
               <td className="px-6 py-4">{node.user.name}</td>
               <td className="px-6 py-4">{node.absenceType.name}</td>
-              <td className="px-6 py-4 text-center">{format(new Date(node.startDateAt.slice(0, -1)), 'dd/MM/yyyy')}</td>
-              <td className="px-6 py-4 text-center">{format(new Date(node.endDateAt.slice(0, -1)), 'dd/MM/yyyy')}</td>
+              <td className="px-6 py-4 text-center">
+                {format(new Date(node.startDateAt.slice(0, -1)), 'dd/MM/yyyy')}
+              </td>
+              <td className="px-6 py-4 text-center">
+                {format(new Date(node.endDateAt.slice(0, -1)), 'dd/MM/yyyy')}
+              </td>
               <td className="px-6 py-4 grid grid-cols-3 text-center">
                 <Link href={`/absences/${node.id}`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">

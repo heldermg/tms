@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
 import { Team, User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -34,13 +33,7 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
   const buttonLabel = isEdit ? 'Update Team' : 'Create new Team'
   const loadingButtonLabel = isEdit ? 'Updating...' : 'Creating...'
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-  } = useForm<FormValues>({
+  const { register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
       name,
       managerId,
@@ -48,16 +41,20 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
     },
   })
 
-  const [createTeam, { loading: loadingCreate, error: errorCreate }] =
-    useMutation(TEAMS_CREATE_MUTATION, {
+  const [createTeam, { loading: loadingCreate }] = useMutation(
+    TEAMS_CREATE_MUTATION,
+    {
       onCompleted: () => reset(),
       refetchQueries: [{ query: USERS_QUERY }],
-    })
+    }
+  )
 
-  const [updateTeam, { loading: loadingUpdate, error: errorUpdate }] =
-    useMutation(TEAMS_UPDATE_MUTATION, {
+  const [updateTeam, { loading: loadingUpdate }] = useMutation(
+    TEAMS_UPDATE_MUTATION,
+    {
       refetchQueries: [{ query: TEAMS_QUERY }],
-    })
+    }
+  )
 
   const {
     data: usersData,
@@ -66,6 +63,7 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
   } = useQuery(USERS_QUERY, {
     variables: {
       withoutTeam: true,
+      id: id ? id : undefined,
     },
     fetchPolicy: 'no-cache',
   })

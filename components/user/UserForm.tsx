@@ -35,13 +35,7 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
   const buttonLabel = isEdit ? 'Update User' : 'Create new User'
   const loadingButtonLabel = isEdit ? 'Updating...' : 'Creating...'
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-  } = useForm<FormValues>({
+  const { register, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
       name,
       email,
@@ -51,16 +45,20 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
     },
   })
 
-  const [updateUser, { loading: loadingUpdate, error: errorUpdate }] =
-    useMutation(USERS_UPDATE_MUTATION, {
-      refetchQueries: [{ query: ROLES_QUERY }],
-    })
-
-  const [createUser, { loading: loadingCreate, error: errorCreate }] =
-    useMutation(USERS_CREATE_MUTATION, {
+  const [createUser, { loading: loadingCreate }] = useMutation(
+    USERS_CREATE_MUTATION,
+    {
       onCompleted: () => reset(),
       refetchQueries: [{ query: ROLES_QUERY }],
-    })
+    }
+  )
+
+  const [updateUser, { loading: loadingUpdate }] = useMutation(
+    USERS_UPDATE_MUTATION,
+    {
+      refetchQueries: [{ query: ROLES_QUERY }],
+    }
+  )
 
   const {
     data: rolesData,
@@ -147,21 +145,27 @@ export const UserForm = ({ user, roles }: UserFormProps) => {
         </label>
         <label className="block">
           <span className="text-gray-700">Roles</span>
-          {rolesData?.roles?.edges.map(({ node }: { node: Role }) => (
-            <div key={node.id} className="text-gray-700">
-              <label>
-                <input
-                  type="checkbox"
-                  placeholder="Roles"
-                  value={node.id}
-                  {...register('roles', { required: true })}
-                />
-                <span>
-                  &nbsp;{node.acronym} - {node.name}
-                </span>
-              </label>
-            </div>
-          ))}
+          {rolesLoading ? (
+            <div>Loandig roles</div>
+          ) : (
+            <>
+              {rolesData?.roles?.edges.map(({ node }: { node: Role }) => (
+                <div key={node.id} className="text-gray-700">
+                  <label>
+                    <input
+                      type="checkbox"
+                      placeholder="Roles"
+                      value={node.id}
+                      {...register('roles', { required: true })}
+                    />
+                    <span>
+                      &nbsp;{node.acronym} - {node.name}
+                    </span>
+                  </label>
+                </div>
+              ))}
+            </>
+          )}
         </label>
 
         <button

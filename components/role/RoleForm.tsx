@@ -1,11 +1,14 @@
 import { useMutation } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
 import { Role } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast, Toaster } from 'react-hot-toast'
-import { ROLES_CREATE_MUTATION, ROLES_QUERY, ROLES_UPDATE_MUTATION } from '../../pages/api/query/roles/roles-queries'
+import {
+  ROLES_CREATE_MUTATION,
+  ROLES_QUERY,
+  ROLES_UPDATE_MUTATION,
+} from '../../pages/api/query/roles/roles-queries'
 import { FormType } from '../form-util'
 import SvgIcon from '../icons/SvgIcon'
 
@@ -16,7 +19,7 @@ type FormValues = {
 }
 
 interface RoleFormProps {
-  role?: Role,
+  role?: Role
 }
 
 export const RoleForm = ({ role }: RoleFormProps) => {
@@ -25,33 +28,38 @@ export const RoleForm = ({ role }: RoleFormProps) => {
   const isEdit = id ? true : false
   let formType: FormType = id ? FormType.EDIT : FormType.NEW
 
-  const buttonLabel = isEdit ? "Update Role" : "Create new Role"
-  const loadingButtonLabel = isEdit ? "Updating..." : "Creating..."
+  const buttonLabel = isEdit ? 'Update Role' : 'Create new Role'
+  const loadingButtonLabel = isEdit ? 'Updating...' : 'Creating...'
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
   } = useForm<FormValues>({
     defaultValues: {
       name,
       acronym,
-      description
+      description,
+    },
+  })
+
+  const [createRole, { loading: loadingCreate }] = useMutation(
+    ROLES_CREATE_MUTATION,
+    {
+      onCompleted: () => reset(),
     }
-  })
+  )
 
-  const [updateRole, { loading: loadingUpdate, error: errorUpdate }] = useMutation(ROLES_UPDATE_MUTATION, {
-    refetchQueries: [{ query: ROLES_QUERY }, getOperationName(ROLES_QUERY)!]
-  })
-
-  const [createRole, { loading: loadingCreate, error: errorCreate }] = useMutation(ROLES_CREATE_MUTATION, {
-    onCompleted: () => reset(),
-  })
+  const [updateRole, { loading: loadingUpdate }] = useMutation(
+    ROLES_UPDATE_MUTATION,
+    {
+      refetchQueries: [{ query: ROLES_QUERY }],
+    }
+  )
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const { name, acronym, description } = data
-    const variables = { id: (isEdit ? id : null), name, acronym, description }
+    const variables = { id: isEdit ? id : null, name, acronym, description }
     try {
       if (isEdit) {
         await toast.promise(updateRole({ variables }), {
@@ -70,7 +78,7 @@ export const RoleForm = ({ role }: RoleFormProps) => {
       console.error(error?.message)
     }
   }
-  
+
   return (
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
@@ -121,10 +129,10 @@ export const RoleForm = ({ role }: RoleFormProps) => {
           {loadingCreate || loadingUpdate ? (
             <span className="flex items-center justify-center">
               <SvgIcon
-                iconType='animate-spin'
-                className='w-6 h-6 animate-spin mr-1'
-                title='Animate Spin'
-                desc='Animate Spin'
+                iconType="animate-spin"
+                className="w-6 h-6 animate-spin mr-1"
+                title="Animate Spin"
+                desc="Animate Spin"
               />
               <span>{loadingButtonLabel}</span>
             </span>
@@ -132,16 +140,16 @@ export const RoleForm = ({ role }: RoleFormProps) => {
             <span>{buttonLabel}</span>
           )}
         </button>
-          <Link href={`/roles/`}>
-            <a className="w-full">
-              <button
-                type="button"
-                className="w-full capitalize bg-gray-500 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-600"
-              >
-                Voltar
-              </button>
-            </a>
-          </Link>
+        <Link href={`/roles/`}>
+          <a className="w-full">
+            <button
+              type="button"
+              className="w-full capitalize bg-gray-500 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-600"
+            >
+              Voltar
+            </button>
+          </a>
+        </Link>
       </form>
     </div>
   )

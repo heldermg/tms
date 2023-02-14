@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
 import { AbsenceType } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -11,13 +10,10 @@ import {
 import SvgIcon from '../icons/SvgIcon'
 
 export const AbsenceTypeList = ({ absenceTypes }: any) => {
-  const [deleteAbsenceType, { loading, error }] = useMutation(
+  const [deleteAbsenceType, { loading }] = useMutation(
     ABSENCE_TYPE_DELETE_MUTATION,
     {
-      refetchQueries: [
-        { query: ABSENCE_TYPE_QUERY },
-        getOperationName(ABSENCE_TYPE_QUERY)!,
-      ],
+      refetchQueries: [{ query: ABSENCE_TYPE_QUERY }],
     }
   )
 

@@ -9,6 +9,7 @@ import { DateTimeResolver, TimeResolver } from 'graphql-scalars'
 export const builder = new SchemaBuilder<{
   Scalars: {
     Date: { Input: Date; Output: Date }
+    Time: { Input: string; Output: string }
   }
   PrismaTypes: PrismaTypes
 }>({
@@ -23,7 +24,7 @@ export const builder = new SchemaBuilder<{
 })
 
 builder.addScalarType("Date", DateTimeResolver, {})
-//builder.addScalarType("Time", TimeResolver, {})
+builder.addScalarType("Time", TimeResolver, {})
 
 builder.queryType({
   fields: (t) => ({

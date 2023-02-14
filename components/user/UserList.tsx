@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
 import { User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -12,9 +11,8 @@ import SvgIcon from '../icons/SvgIcon'
 import { UserProfile } from './UserProfile'
 
 export const UserList = ({ users }: any) => {
-
-  const [deleteUser, { loading, error }] = useMutation(USERS_DELETE_MUTATION, {
-    refetchQueries: [{ query: USERS_QUERY }, getOperationName(USERS_QUERY)!],
+  const [deleteUser, { loading }] = useMutation(USERS_DELETE_MUTATION, {
+    refetchQueries: [{ query: USERS_QUERY }],
   })
 
   async function handleDeleteUser(id: string) {
@@ -58,7 +56,9 @@ export const UserList = ({ users }: any) => {
             <tr key={node.id}>
               <td className="px-6 py-4">{node.name}</td>
               <td className="px-6 py-4 text-left">{node.email}</td>
-              <td className="px-6 py-4 text-left">{UserProfile[node.profile]}</td>
+              <td className="px-6 py-4 text-left">
+                {UserProfile[node.profile]}
+              </td>
               <td className="px-6 py-4">
                 <Link href={`/users/${node.id}`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
@@ -82,7 +82,14 @@ export const UserList = ({ users }: any) => {
                 </Link>
                 <button
                   disabled={loading}
-                  onClick={() => { if (window.confirm(`Are you sure you want to delete the user ${node.name} ?`)) handleDeleteUser(node.id) } }
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Are you sure you want to delete the user ${node.name} ?`
+                      )
+                    )
+                      handleDeleteUser(node.id)
+                  }}
                   className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
                 >
                   <SvgIcon

@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
-import { Team, User } from '@prisma/client'
+import { User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
 import { toast, Toaster } from 'react-hot-toast'
@@ -11,8 +10,9 @@ import {
 import SvgIcon from '../icons/SvgIcon'
 
 export const TeamList = ({ teams }: any) => {
-  const [deleteTeam, { loading, error }] = useMutation(TEAMS_DELETE_MUTATION, {
-    refetchQueries: [{ query: TEAMS_QUERY }, getOperationName(TEAMS_QUERY)!],
+
+  const [deleteTeam, { loading }] = useMutation(TEAMS_DELETE_MUTATION, {
+    refetchQueries: [{ query: TEAMS_QUERY }],
   })
 
   async function handleDeleteTeam(id: string) {
@@ -58,7 +58,7 @@ export const TeamList = ({ teams }: any) => {
               <td className="px-6 py-4 text-center">{node.members.length}</td>
               <td className="px-6 py-4 text-left">
                 {node.members
-                  .filter((m: User) => (m.id == node.managerId))
+                  .filter((m: User) => m.id == node.managerId)
                   .map((m: User) => m.name)}
               </td>
               <td className="px-6 py-4">
@@ -84,7 +84,14 @@ export const TeamList = ({ teams }: any) => {
                 </Link>
                 <button
                   disabled={loading}
-                  onClick={() => { if (window.confirm(`Are you sure you want to delete the team ${node.name} ?`)) handleDeleteTeam(node.id) } }
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Are you sure you want to delete the team ${node.name} ?`
+                      )
+                    )
+                      handleDeleteTeam(node.id)
+                  }}
                   className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
                 >
                   <SvgIcon

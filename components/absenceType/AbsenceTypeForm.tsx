@@ -1,11 +1,14 @@
 import { useMutation } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
 import { AbsenceType } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast, Toaster } from 'react-hot-toast'
-import { ABSENCE_TYPE_CREATE_MUTATION, ABSENCE_TYPE_QUERY, ABSENCE_TYPE_UPDATE_MUTATION } from '../../pages/api/query/absenceTypes/absenceTypes-queries'
+import {
+  ABSENCE_TYPE_CREATE_MUTATION,
+  ABSENCE_TYPE_QUERY,
+  ABSENCE_TYPE_UPDATE_MUTATION,
+} from '../../pages/api/query/absenceTypes/absenceTypes-queries'
 import { FormType } from '../form-util'
 import SvgIcon from '../icons/SvgIcon'
 
@@ -15,7 +18,7 @@ type FormValues = {
 }
 
 interface AbsenceTypeFormProps {
-  absenceType?: AbsenceType,
+  absenceType?: AbsenceType
 }
 
 export const AbsenceTypeForm = ({ absenceType }: AbsenceTypeFormProps) => {
@@ -24,32 +27,37 @@ export const AbsenceTypeForm = ({ absenceType }: AbsenceTypeFormProps) => {
   const isEdit = id ? true : false
   let formType: FormType = id ? FormType.EDIT : FormType.NEW
 
-  const buttonLabel = isEdit ? "Update Absence Type" : "Create new Absence Type"
-  const loadingButtonLabel = isEdit ? "Updating..." : "Creating..."
+  const buttonLabel = isEdit ? 'Update Absence Type' : 'Create new Absence Type'
+  const loadingButtonLabel = isEdit ? 'Updating...' : 'Creating...'
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
   } = useForm<FormValues>({
     defaultValues: {
       name,
-      description
+      description,
+    },
+  })
+
+  const [createAbsenceType, { loading: loadingCreate }] = useMutation(
+    ABSENCE_TYPE_CREATE_MUTATION,
+    {
+      onCompleted: () => reset(),
     }
-  })
+  )
 
-  const [updateAbsenceType, { loading: loadingUpdate, error: errorUpdate }] = useMutation(ABSENCE_TYPE_UPDATE_MUTATION, {
-    refetchQueries: [{ query: ABSENCE_TYPE_QUERY }, getOperationName(ABSENCE_TYPE_QUERY)!]
-  })
-
-  const [createAbsenceType, { loading: loadingCreate, error: errorCreate }] = useMutation(ABSENCE_TYPE_CREATE_MUTATION, {
-    onCompleted: () => reset(),
-  })
+  const [updateAbsenceType, { loading: loadingUpdate }] = useMutation(
+    ABSENCE_TYPE_UPDATE_MUTATION,
+    {
+      refetchQueries: [{ query: ABSENCE_TYPE_QUERY }],
+    }
+  )
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     const { name, description } = data
-    const variables = { id: (isEdit ? id : null), name, description }
+    const variables = { id: isEdit ? id : null, name, description }
     try {
       if (isEdit) {
         await toast.promise(updateAbsenceType({ variables }), {
@@ -68,11 +76,13 @@ export const AbsenceTypeForm = ({ absenceType }: AbsenceTypeFormProps) => {
       console.error(error?.message)
     }
   }
-  
+
   return (
     <div className="container mx-auto max-w-md py-12">
       <Toaster />
-      <h1 className="text-3xl font-medium my-5 text-center">{formType} Absence Type</h1>
+      <h1 className="text-3xl font-medium my-5 text-center">
+        {formType} Absence Type
+      </h1>
       <form
         className="grid grid-cols-1 gap-y-6 shadow-lg p-8 rounded-lg"
         onSubmit={handleSubmit(onSubmit)}
@@ -108,10 +118,10 @@ export const AbsenceTypeForm = ({ absenceType }: AbsenceTypeFormProps) => {
           {loadingCreate || loadingUpdate ? (
             <span className="flex items-center justify-center">
               <SvgIcon
-                iconType='animate-spin'
-                className='w-6 h-6 animate-spin mr-1'
-                title='Animate Spin'
-                desc='Animate Spin'
+                iconType="animate-spin"
+                className="w-6 h-6 animate-spin mr-1"
+                title="Animate Spin"
+                desc="Animate Spin"
               />
               <span>{loadingButtonLabel}</span>
             </span>
@@ -119,16 +129,16 @@ export const AbsenceTypeForm = ({ absenceType }: AbsenceTypeFormProps) => {
             <span>{buttonLabel}</span>
           )}
         </button>
-          <Link href={`/absenceTypes/`}>
-            <a className="w-full">
-              <button
-                type="button"
-                className="w-full capitalize bg-gray-500 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-600"
-              >
-                Voltar
-              </button>
-            </a>
-          </Link>
+        <Link href={`/absenceTypes/`}>
+          <a className="w-full">
+            <button
+              type="button"
+              className="w-full capitalize bg-gray-500 text-white font-medium py-2 px-4 rounded-md hover:bg-gray-600"
+            >
+              Voltar
+            </button>
+          </a>
+        </Link>
       </form>
     </div>
   )

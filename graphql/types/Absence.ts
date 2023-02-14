@@ -10,8 +10,8 @@ builder.prismaObject('Absence', {
     description: t.exposeString('description'),
     startDateAt: t.expose('startDateAt', { type: 'Date' }),
     endDateAt: t.expose('endDateAt', { type: 'Date' }),
-    //startTimeAt: t.expose('startTimeAt', { type: 'Time' }),
-    //endTimeAt: t.expose('endTimeAt', { type: 'Time' }),
+    startTimeAt: t.expose('startTimeAt', { type: 'Time', nullable: true }),
+    endTimeAt: t.expose('endTimeAt', { type: 'Time', nullable: true }),
     isAllDay: t.exposeBoolean('isAllDay'),
     user: t.relation('user'),
     userId: t.exposeString('userId'),
@@ -31,11 +31,13 @@ builder.queryField('absences', (t) =>
       const { id } = args
 
       if (id) {
-        return await prisma.absence.findMany({
+        const absences = await prisma.absence.findMany({
           where: {
             id,
           },
         })
+
+        return absences
       }
 
       return await prisma.absence.findMany({
@@ -78,13 +80,62 @@ builder.mutationField('createAbsence', (t) =>
         absenceTypeId,
       } = args
 
-      console.log(args);
-      
+      const newStartDateAt = new Date(Date.parse(startDateAt.toUTCString()) - startDateAt.getTimezoneOffset() * 60000)
+      const newEndDateAt = new Date(Date.parse(endDateAt.toUTCString()) - endDateAt.getTimezoneOffset() * 60000)
 
-      const isAllDay: boolean = startTimeAt && endTimeAt ? true : false
+      const isAllDay: boolean = startTimeAt && endTimeAt ? false : true
 
       return await prisma.absence.create({
         ...query,
+        data: {
+          title,
+          description,
+          startDateAt: newStartDateAt,
+          endDateAt: newEndDateAt,
+          startTimeAt,
+          endTimeAt,
+          isAllDay,
+          userId,
+          absenceTypeId,
+        },
+      })
+    },
+  })
+)
+
+builder.mutationField('updateAbsence', (t) =>
+  t.prismaField({
+    type: 'Absence',
+    args: {
+      id: t.arg.string({ required: true }),
+      title: t.arg.string({ required: true }),
+      description: t.arg.string({ required: true }),
+      startDateAt: t.arg({ type: 'Date', required: true }),
+      endDateAt: t.arg({ type: 'Date', required: true }),
+      startTimeAt: t.arg({ type: 'Date' }),
+      endTimeAt: t.arg({ type: 'Date' }),
+      userId: t.arg.string({ required: true }),
+      absenceTypeId: t.arg.string({ required: true }),
+    },
+    resolve: async (query, _parent, args, ctx) => {
+      const {
+        id,
+        title,
+        description,
+        startDateAt,
+        endDateAt,
+        startTimeAt,
+        endTimeAt,
+        userId,
+        absenceTypeId,
+      } = args
+
+      const isAllDay: boolean = startTimeAt && endTimeAt ? false : true
+
+      return await prisma.absence.update({
+        where: {
+          id,
+        },
         data: {
           title,
           description,

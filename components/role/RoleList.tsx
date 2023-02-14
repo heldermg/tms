@@ -1,5 +1,4 @@
-import { ApolloError, useMutation } from '@apollo/client'
-import { getOperationName } from '@apollo/client/utilities'
+import { useMutation } from '@apollo/client'
 import { Role } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -11,8 +10,8 @@ import {
 import SvgIcon from '../icons/SvgIcon'
 
 export const RoleList = ({ roles }: any) => {
-  const [deleteRole, { loading, error }] = useMutation(ROLES_DELETE_MUTATION, {
-    refetchQueries: [{ query: ROLES_QUERY }, getOperationName(ROLES_QUERY)!],
+  const [deleteRole, { loading }] = useMutation(ROLES_DELETE_MUTATION, {
+    refetchQueries: [{ query: ROLES_QUERY }],
   })
 
   async function handleDeleteRole(id: string) {
@@ -76,7 +75,14 @@ export const RoleList = ({ roles }: any) => {
                 </Link>
                 <button
                   disabled={loading}
-                  onClick={() => { if (window.confirm(`Are you sure you want to delete the role ${node.name} ?`)) handleDeleteRole(node.id) } }
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Are you sure you want to delete the role ${node.name} ?`
+                      )
+                    )
+                      handleDeleteRole(node.id)
+                  }}
                   className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0"
                 >
                   <SvgIcon

@@ -16,6 +16,8 @@ export const ABSENCE_QUERY = gql`
           description
           startDateAt
           endDateAt
+          startTimeAt
+          endTimeAt
           user {
             id
             name
