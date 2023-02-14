@@ -18,10 +18,13 @@ export const ABSENCE_QUERY = gql`
           endDateAt
           startTimeAt
           endTimeAt
+          isAllDay
+          userId
           user {
             id
             name
           }
+          absenceTypeId
           absenceType {
             id
             name
@@ -57,6 +60,8 @@ export const ABSENCE_CREATE_MUTATION = gql`
       description
       startDateAt
       endDateAt
+      startTimeAt
+      endTimeAt
       isAllDay
       userId
       absenceTypeId

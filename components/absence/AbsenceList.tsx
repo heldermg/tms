@@ -53,6 +53,9 @@ export const AbsenceList = ({ absences }: any) => {
               End Date At
             </th>
             <th scope="col" className="bg-blue-50 border text-center px-8 py-4">
+              All Day ?
+            </th>
+            <th scope="col" className="bg-blue-50 border text-center px-8 py-4">
               Actions
             </th>
           </tr>
@@ -69,6 +72,7 @@ export const AbsenceList = ({ absences }: any) => {
               <td className="px-6 py-4 text-center">
                 {format(new Date(node.endDateAt.slice(0, -1)), 'dd/MM/yyyy')}
               </td>
+              <td className="px-6 py-4"><input type="checkbox" checked={node.isAllDay} disabled /></td>
               <td className="px-6 py-4 grid grid-cols-3 text-center">
                 <Link href={`/absences/${node.id}`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">
@@ -116,7 +120,7 @@ export const AbsenceList = ({ absences }: any) => {
         <tfoot>
           <tr>
             <td></td>
-            <td colSpan={5}>
+            <td colSpan={6}>
               <div className="flex flex-row justify-end">
                 <Link href={`/absences/new`}>
                   <a className="inline-flex items-center border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">

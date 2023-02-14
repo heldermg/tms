@@ -10,7 +10,7 @@ interface UserDetailProps {
 }
 
 export const UserDetail = ({ user, userLoading, roles }: UserDetailProps) => {
-  const { id, name, email, profile, image } = user
+  const { name, email, profile, image } = user
 
   return (
     <div className="container mx-auto max-w-md py-12">

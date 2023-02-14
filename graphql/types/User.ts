@@ -226,6 +226,11 @@ builder.mutationField('deleteUser', (t) =>
         },
         include: {
           team: true,
+          absences: {
+            select: {
+              id: true
+            }
+          }
         },
       })
 
@@ -235,6 +240,10 @@ builder.mutationField('deleteUser', (t) =>
 
       if (user.team) {
         throw new GraphQLError(`Error! User is part of the team ${user.team.name}`)
+      }
+
+      if (user.absences && user.absences.length > 0) {
+        throw new GraphQLError(`Error! User is in use by some Absence.`)
       }
 
       await prisma.user.delete({

@@ -11,7 +11,7 @@ interface TeamDetailProps {
 }
 
 export const TeamDetail = ({ team, teamLoading, manager, managerLoading, users }: TeamDetailProps) => {
-  const { id, name, managerId } = team
+  const { name, managerId } = team
 
   return (
     <div className="container mx-auto max-w-md py-12">
