@@ -115,7 +115,7 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
         <label className="block">
           <span className="text-gray-700">Manager</span>
           {usersLoading ? (
-            <span>Loandig users</span>
+            <div>Loandig users</div>
           ) : (
             <select
               required={true}
@@ -134,7 +134,7 @@ export const TeamForm = ({ team, users }: TeamFormProps) => {
         <label className="block">
           <span className="text-gray-700">Members</span>
           {usersLoading ? (
-            <span>Loandig users</span>
+            <div>Loandig users</div>
           ) : (
             <span>
               {usersData?.users?.edges.map(({ node }: { node: User }) => (

@@ -47,10 +47,6 @@ builder.mutationField('createRole', (t) =>
     resolve: async (query, _parent, args, ctx) => {
       const { name, acronym, description } = args
 
-      //if (!(await ctx).user) {
-      //  throw new Error("You have to be logged in to perform this action")
-      //}
-
       const role = await prisma.role.findUnique({
         where: {
           acronym,

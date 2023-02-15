@@ -32,7 +32,7 @@ export const TeamDetail = ({ team, teamLoading, manager, managerLoading, users }
         <label className="block">
           <span className="text-gray-700">Manager</span>
           {managerLoading ? (
-            <span>Loandig manager</span>
+            <div>Loandig manager</div>
           ) : (
             <select
               required={false}

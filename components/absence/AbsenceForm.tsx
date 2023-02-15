@@ -224,7 +224,7 @@ export const AbsenceForm = ({
         <label className="block">
           <span className="text-gray-700">User</span>
           {usersLoading ? (
-            <span>Loandig users</span>
+            <div>Loandig users</div>
           ) : (
             <select
               required={true}
@@ -243,7 +243,7 @@ export const AbsenceForm = ({
         <label className="block">
           <span className="text-gray-700">Absence Type</span>
           {absenceTypesLoading ? (
-            <span>Loandig absence types</span>
+            <div>Loandig absence types</div>
           ) : (
             <select
               required={true}
