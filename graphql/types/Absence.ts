@@ -3,6 +3,9 @@
 import { GraphQLError } from 'graphql'
 import { prisma } from '../../lib/prisma'
 import { builder } from '../builder'
+import { render } from "@react-email/render"
+import AbsenceEmailTemplate from "../../components/email/AbsenceEmailTemplate"
+import { sendEmail } from "../../lib/email"
 
 builder.prismaObject('Absence', {
   fields: (t) => ({
@@ -101,7 +104,7 @@ builder.mutationField('createAbsence', (t) =>
         throw new GraphQLError(`Error! Start Time cannot be equal or after the End Time.`)
       }
 
-      return await prisma.absence.create({
+      const absence = await prisma.absence.create({
         ...query,
         data: {
           title,
@@ -115,6 +118,49 @@ builder.mutationField('createAbsence', (t) =>
           absenceTypeId,
         },
       })
+
+      const team = await prisma.team.findFirst({
+        where: {
+          members: {
+            some: {
+              id: userId
+            }
+          }
+        }
+      })
+      
+      console.log('team')
+      console.log(team)
+
+      const manager = await prisma.user.findUnique({
+        where: {
+          id: team?.managerId
+        }
+      })
+
+      console.log('manager')
+      console.log(manager)
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: userId
+        }
+      })
+
+      const absenceType = await prisma.absenceType.findUnique({
+        where: {
+          id: absenceTypeId
+        }
+      })
+    
+      sendEmail({
+        from: "tms-app@tms-app.com",
+        to: manager?.email,
+        subject: "[TMS] New Absence Record!",
+        html: render(AbsenceEmailTemplate(absence, user, absenceType)),
+      })
+
+      return absence
     },
   })
 )

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Toaster } from 'react-hot-toast'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import { sanitizeDateOffset, sanitizeTime } from '../../lib/time'
 
 interface AbsenceDetailProps {
   absence: Absence
@@ -31,31 +32,6 @@ export const AbsenceDetail = ({
     userId,
     absenceTypeId,
   } = absence
-
-  function sanitizeDateOffset(oldDate: any) {
-    if (oldDate) {
-      const newDate = new Date(oldDate)
-      newDate.setMinutes(newDate.getMinutes() + newDate.getTimezoneOffset())
-      return newDate
-    }
-    return oldDate
-  }
-
-  function sanitizeTime(oldTime: any) {
-    const regex = /^\d\d:\d\d:\d\d.\d\d\dZ/i
-
-    if (oldTime && regex.test(oldTime)) {
-      const hours = oldTime.substring(0, 2)
-      const minutes = oldTime.substring(3, 5)
-
-      const newTime = new Date(1970, 0, 1)
-      newTime.setHours(+hours)
-      newTime.setMinutes(+minutes)
-      newTime.setSeconds(0)
-      return newTime
-    }
-    return oldTime
-  }
 
   return (
     <div className="container mx-auto max-w-md py-12">
