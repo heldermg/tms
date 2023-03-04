@@ -163,7 +163,6 @@ export const AbsenceForm = ({
     const regex = /^\d\d:\d\d:\d\d.\d\d\dZ/i
 
     if (oldTime && oldTime.value && regex.test(oldTime.value)) {
-      console.log('Time')
       const value = oldTime.value
       const hours = value.substring(0, 2)
       const minutes = value.substring(3, 5)
@@ -172,7 +171,6 @@ export const AbsenceForm = ({
       newTime.setHours(+hours)
       newTime.setMinutes(+minutes)
       newTime.setSeconds(0)
-      console.log(newTime)
       
       oldTime.onChange(newTime)
       return newTime

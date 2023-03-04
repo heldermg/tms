@@ -13,15 +13,11 @@ import { TEAMS_QUERY } from '../api/query/teams/teams-queries'
 
 function getNumberOfAbsences(chartLabels: string[], users: any, teamId: string): number[] {
   let count: number
-  console.log('teamId')
-  console.log(teamId)
-  
   const data = chartLabels.map((l) => {
     count = 0
     let usersIdCounted: string[] = []
     users.forEach((u: any) => {
       u.absences.forEach((a: any) => {
-        console.log(u.teamId)
         if (u.teamId == teamId) {
           const start = format(new Date(a.startDateAt.slice(0, -1)), 'dd/MM/yyyy')
           const end = format(new Date(a.endDateAt.slice(0, -1)), 'dd/MM/yyyy')

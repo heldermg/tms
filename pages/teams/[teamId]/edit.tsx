@@ -40,7 +40,6 @@ const EditTeamPage = () => {
   const team = nodes.shift()
 
   const users = team.members.map((t: User) => t.id)
-console.log(users);
 
   return (
     <TeamForm 

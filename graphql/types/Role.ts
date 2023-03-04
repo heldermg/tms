@@ -42,9 +42,6 @@ builder.queryField('rolesWithAbsences', (t) =>
     cursor: 'id',
     resolve: async (query, _parent, args, _ctx, _info) => {
 
-      console.log('rolesWithAbsences');
-      
-
       const roles = await prisma.role.findMany({
         include: {
           users: {

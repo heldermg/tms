@@ -40,10 +40,6 @@ builder.queryField('absences', (t) =>
             id,
           },
         })
-
-        console.log('absences');
-        console.log(absenceById);
-
         return absenceById
       }
 
@@ -128,18 +124,12 @@ builder.mutationField('createAbsence', (t) =>
           }
         }
       })
-      
-      console.log('team')
-      console.log(team)
 
       const manager = await prisma.user.findUnique({
         where: {
           id: team?.managerId
         }
       })
-
-      console.log('manager')
-      console.log(manager)
 
       const user = await prisma.user.findUnique({
         where: {
