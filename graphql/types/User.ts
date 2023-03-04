@@ -18,6 +18,7 @@ builder.prismaObject('User', {
     teamsManaged: t.relation('teamsManaged'),
     team: t.relation('team'),
     teamId: t.exposeString('teamId', { nullable: true }),
+    absences: t.relation('absences', { nullable: true }),
   }),
 })
 

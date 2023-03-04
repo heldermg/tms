@@ -79,4 +79,17 @@ export const menuItems = [
       />
     ),
   },
+  {
+    id: 7,
+    href: '/absencesReport',
+    title: 'Absences Report',
+    icon: (
+      <SvgIcon
+        iconType="chart-bar"
+        title="Absences Report"
+        desc="Absences Report Button"
+        className="w-10 h-10"
+      />
+    ),
+  },
 ]

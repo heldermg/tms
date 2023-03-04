@@ -42,7 +42,7 @@ export const AbsenceList = ({ absences }: any) => {
               Title
             </th>
             <th scope="col" className="bg-blue-50 border text-left px-8 py-4">
-              User
+              Team: User
             </th>
             <th scope="col" className="bg-blue-50 border text-center px-8 py-4">
               Absence Type
@@ -65,7 +65,7 @@ export const AbsenceList = ({ absences }: any) => {
           {absences.edges.map(({ node }: { node: any }) => (
             <tr key={node.id}>
               <td className="px-6 py-4">{node.title}</td>
-              <td className="px-6 py-4">{node.user.name}</td>
+              <td className="px-6 py-4">{`${node.user.team?.name}: ${node.user.name}`}</td>
               <td className="px-6 py-4">{node.absenceType.name}</td>
               <td className="px-6 py-4 text-center">
                 {format(new Date(node.startDateAt.slice(0, -1)), 'dd/MM/yyyy')}

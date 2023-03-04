@@ -36,6 +36,32 @@ builder.queryField('roles', (t) =>
   })
 )
 
+builder.queryField('rolesWithAbsences', (t) =>
+  t.prismaConnection({
+    type: 'Role',
+    cursor: 'id',
+    resolve: async (query, _parent, args, _ctx, _info) => {
+
+      console.log('rolesWithAbsences');
+      
+
+      const roles = await prisma.role.findMany({
+        include: {
+          users: {
+            select: {
+              id: true,
+              teamId: true,
+              absences: true,
+            }
+          }
+        }
+      })
+
+      return roles
+    },
+  })
+)
+
 builder.mutationField('createRole', (t) =>
   t.prismaField({
     type: 'Role',

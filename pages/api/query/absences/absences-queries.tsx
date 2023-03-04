@@ -23,6 +23,9 @@ export const ABSENCE_QUERY = gql`
           user {
             id
             name
+            team {
+              name
+            }
           }
           absenceTypeId
           absenceType {

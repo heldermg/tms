@@ -1,3 +1,5 @@
+import { format } from "date-fns"
+
 export function sanitizeTime(oldTime: any) {
   const regex = /^\d\d:\d\d:\d\d.\d\d\dZ/i
 
@@ -21,4 +23,16 @@ export function sanitizeDateOffset(oldDate: any) {
     return newDate
   }
   return oldDate
+}
+
+export function getNextDays(d: number) {
+  let date = new Date()
+  let lastDate = new Date()
+  lastDate.setDate(lastDate.getDate() + d);
+  let days = [];
+  while (date.getTime() < lastDate.getTime()) {
+    days.push(format(new Date(date), 'dd/MM/yyyy'))
+    date.setDate(date.getDate() + 1)
+  }
+  return days
 }
