@@ -1,4 +1,5 @@
 // /graphql/types/Role.ts
+import { Prisma, Role } from '@prisma/client'
 import { GraphQLError } from 'graphql'
 import { prisma } from '../../lib/prisma'
 import { builder } from '../builder'
@@ -32,6 +33,44 @@ builder.queryField('roles', (t) =>
         : await prisma.role.findMany({ ...query })
 
       return roles
+    },
+  })
+)
+
+builder.queryField('countRolesByTeam', (t) => 
+  t.prismaConnection({
+    type: 'Role',
+    cursor: 'id',
+    args: {
+      teamId: t.arg.string(),
+    },
+    resolve: async (query, _parent, args, _ctx, _info) => {
+      const { teamId } = args
+
+      const result: any[] = await prisma.$queryRaw(
+        Prisma.sql`
+          SELECT r."acronym", count(*) 
+          FROM "public"."role" r 
+          join "public"."_RoleToUser" rtu on rtu."A" = r."id" 
+          join "public"."user" u on u."id" = rtu."B"
+          where u."teamId" = ${teamId}
+          group by r."acronym"
+        `
+      )
+      
+      const data = result.map((e: any, idx) => {
+        const r: Role = {
+          id: idx+'',
+          acronym: e.acronym,
+          name: e.count + '',
+          description: '',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+        return r
+      })
+
+      return data
     },
   })
 )

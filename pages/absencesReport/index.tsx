@@ -3,8 +3,8 @@ import Head from 'next/head'
 import BarChart from '../../components/chart/BarChart'
 import { getNextDays } from '../../lib/time'
 import { ChartData } from '../../components/chart/ChartData'
-import { ROLES_WITH_ABSENCE_QUERY } from '../api/query/roles/roles-queries'
-import { useQuery } from '@apollo/client'
+import { ROLES_COUNT_BY_TEAM, ROLES_WITH_ABSENCE_QUERY } from '../api/query/roles/roles-queries'
+import { useLazyQuery, useQuery } from '@apollo/client'
 import { Vortex } from 'react-loader-spinner'
 import { Role, Team } from '@prisma/client'
 import { format } from 'date-fns'
@@ -59,6 +59,16 @@ function ChartReport() {
     fetchPolicy: 'no-cache',
   })
 
+  const [ 
+    getRolesByTeamId, 
+    { data: dataRoles, loading: loadingRoles, error: errorRoles }
+  ] = useLazyQuery(ROLES_COUNT_BY_TEAM, {
+    fetchPolicy: 'no-cache',
+    variables: {
+      teamId
+    }
+  })
+
   const {
     data: dataTeams,
     loading: loadingTeams,
@@ -72,6 +82,7 @@ function ChartReport() {
     if (teams) {
       setTeamMembers(teams[0].membersCount)
       setTeamId(teams[0].id)
+      getRolesByTeamId()
     }
   }, [dataTeams])
 
@@ -121,6 +132,7 @@ function ChartReport() {
     const valueSplitted = value.split('/')
     setTeamId(valueSplitted[0])
     setTeamMembers(+valueSplitted[1])
+    getRolesByTeamId()
   }
 
   return (
@@ -129,8 +141,13 @@ function ChartReport() {
         <title>Absences</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <div className='flex flex-row'>
+        <label className="text-blue-400 text-2xl block ml-4">
+          Filters
+        </label>
+      </div>
       <div className="flex flex-row">
-        <label className="block m-4">
+        <label className="block ml-4">
           <span className="text-gray-700">Chart Days</span>
           <select
             className="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -151,7 +168,7 @@ function ChartReport() {
             </option>
           </select>
         </label>
-        <label className="block m-4">
+        <label className="block ml-4">
           <span className="text-gray-700">Team</span>
           <select
             className="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -164,8 +181,15 @@ function ChartReport() {
             ))}
           </select>
         </label>
-        <label className="block m-4">
-          <span className="text-gray-700">Total Team Members</span>
+      </div>
+      <div className='flex flex-row mt-4'>
+        <label className="text-blue-400 text-2xl block ml-4">
+          Team Info
+        </label>
+      </div>
+      <div className="flex flex-row">
+        <label className="block ml-4">
+          <span className="text-gray-700">Total Members</span>
           <input
             placeholder="Title"
             value={teamMembers}
@@ -175,6 +199,22 @@ function ChartReport() {
             className="mt-1 w-1/3 bg-gray-200 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           />
         </label>
+        {loadingRoles ? (
+          <span>Loading...</span>
+        ) : (
+          dataRoles?.countRolesByTeam.edges.map(({ node }: { node: Role }) => (
+            <label className="block ml-4" key={node.id}>
+              <span className="text-gray-700">{node.acronym}</span>
+              <input
+                value={node.name}
+                disabled
+                type="text"
+                size={3}
+                className="mt-1 bg-gray-200 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              />
+            </label>
+          ))
+        )}
       </div>
       <div>
         <BarChart

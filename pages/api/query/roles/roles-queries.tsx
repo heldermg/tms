@@ -21,6 +21,25 @@ export const ROLES_QUERY = gql`
   }
 `
 
+export const ROLES_COUNT_BY_TEAM = gql`
+  query countRolesByTeamQuery($first: Int, $after: String, $teamId: String) {
+    countRolesByTeam(first: $first, after: $after, teamId: $teamId) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      edges {
+        cursor
+        node {
+          id
+          acronym
+          name
+        }
+      }
+    }
+  }
+`
+
 export const ROLES_WITH_ABSENCE_QUERY = gql`
   query rolesWithAbsencesQuery($first: Int, $after: String) {
     rolesWithAbsences(first: $first, after: $after) {
