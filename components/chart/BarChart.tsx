@@ -1,5 +1,4 @@
 import React from 'react'
-import Head from 'next/head'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -22,7 +21,7 @@ interface ChartProps {
   width?: number,
 }
 
-function Chart({ title, labels, datasets, height = 500, width = 1000 }: ChartProps) {
+function BarChart({ title, labels, datasets, height = 500, width = 1000 }: ChartProps) {
 
   const data = {
     labels,
@@ -53,4 +52,4 @@ function Chart({ title, labels, datasets, height = 500, width = 1000 }: ChartPro
   )
 }
 
-export default Chart
+export default BarChart

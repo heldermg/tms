@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import Head from 'next/head'
-import Chart from '../../components/chart/Chart'
+import BarChart from '../../components/chart/BarChart'
 import { getNextDays } from '../../lib/time'
 import { ChartData } from '../../components/chart/ChartData'
 import { ROLES_WITH_ABSENCE_QUERY } from '../api/query/roles/roles-queries'
@@ -9,7 +9,7 @@ import { Vortex } from 'react-loader-spinner'
 import { Role, Team } from '@prisma/client'
 import { format } from 'date-fns'
 import { randomRgb } from '../../lib/util'
-import { TEAMS_MEMBERS_COUNT_QUERY, TEAMS_QUERY } from '../api/query/teams/teams-queries'
+import { TEAMS_MEMBERS_COUNT_QUERY } from '../api/query/teams/teams-queries'
 
 function getNumberOfAbsences(
   chartLabels: string[],
@@ -177,7 +177,7 @@ function ChartReport() {
         </label>
       </div>
       <div>
-        <Chart
+        <BarChart
           title="Absences By Roles"
           labels={chartLabels}
           datasets={datasets}
