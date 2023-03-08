@@ -9,7 +9,7 @@ import { Vortex } from 'react-loader-spinner'
 import { Role, Team } from '@prisma/client'
 import { format } from 'date-fns'
 import { randomRgb } from '../../lib/util'
-import { TEAMS_QUERY } from '../api/query/teams/teams-queries'
+import { TEAMS_MEMBERS_COUNT_QUERY, TEAMS_QUERY } from '../api/query/teams/teams-queries'
 
 function getNumberOfAbsences(
   chartLabels: string[],
@@ -17,22 +17,29 @@ function getNumberOfAbsences(
   teamId: string
 ): number[] {
   let count: number
-  const data = chartLabels.map((l) => {
+
+  const data = chartLabels.map((label) => {
     count = 0
     let usersIdCounted: string[] = []
-    users.forEach((u: any) => {
-      u.absences.forEach((a: any) => {
 
-        if (u.teamId == teamId) {
+    users.forEach((user: any) => {
+      user.absences.forEach((absence: any) => {
+        if (user.teamId == teamId) {
           const start = format(
-            new Date(a.startDateAt.slice(0, -1)),
+            new Date(absence.startDateAt.slice(0, -1)),
             'dd/MM/yyyy'
           )
-          const end = format(new Date(a.endDateAt.slice(0, -1)), 'dd/MM/yyyy')
+          const end = format(
+            new Date(absence.endDateAt.slice(0, -1)),
+            'dd/MM/yyyy'
+          )
 
-          if ((l == start || l == end) && !usersIdCounted?.includes(u.id)) {
+          if (
+            (label == start || label == end) &&
+            !usersIdCounted?.includes(user.id)
+          ) {
             count++
-            usersIdCounted.push(u.id)
+            usersIdCounted.push(user.id)
           }
         }
       })
@@ -46,6 +53,7 @@ function getNumberOfAbsences(
 function ChartReport() {
   const [days, setDays] = useState(7)
   const [teamId, setTeamId] = useState('')
+  const [teamMembers, setTeamMembers] = useState(0)
 
   const { data, loading, error } = useQuery(ROLES_WITH_ABSENCE_QUERY, {
     fetchPolicy: 'no-cache',
@@ -55,14 +63,16 @@ function ChartReport() {
     data: dataTeams,
     loading: loadingTeams,
     error: errosTeams,
-  } = useQuery(TEAMS_QUERY, {
+  } = useQuery(TEAMS_MEMBERS_COUNT_QUERY, {
     fetchPolicy: 'no-cache',
   })
 
   useMemo(() => {
     const teams = dataTeams?.teams.edges.map(({ node }: { node: Team }) => node)
-    if (teams)
+    if (teams) {
+      setTeamMembers(teams[0].membersCount)
       setTeamId(teams[0].id)
+    }
   }, [dataTeams])
 
   if (loading || loadingTeams)
@@ -107,7 +117,10 @@ function ChartReport() {
 
   const handleTeamChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     event.preventDefault()
-    setTeamId(event.target.value)
+    const value = event.target.value
+    const valueSplitted = value.split('/')
+    setTeamId(valueSplitted[0])
+    setTeamMembers(+valueSplitted[1])
   }
 
   return (
@@ -144,12 +157,23 @@ function ChartReport() {
             className="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             onChange={handleTeamChange}
           >
-            {teams?.map((t: Team) => (
-              <option key={t.id} value={t.id}>
+            {teams?.map((t: any) => (
+              <option key={t.id} value={`${t.id}/${t.membersCount}`}>
                 {t.name}
               </option>
             ))}
           </select>
+        </label>
+        <label className="block m-4">
+          <span className="text-gray-700">Total Team Members</span>
+          <input
+            placeholder="Title"
+            value={teamMembers}
+            disabled
+            name="Total Team Members"
+            type="text"
+            className="mt-1 w-1/3 bg-gray-200 block rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
         </label>
       </div>
       <div>

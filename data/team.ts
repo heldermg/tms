@@ -1,5 +1,5 @@
 export const teams = [
   {
-    name: 'DGTU4',
+    name: 'Team1',
   },
 ]

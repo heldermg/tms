@@ -2,13 +2,14 @@ import { Html } from "@react-email/html"
 import { Text } from "@react-email/text"
 import { Section } from "@react-email/section"
 import { Container } from "@react-email/container"
-import { Absence, AbsenceType, User } from "@prisma/client"
+import { Absence, AbsenceType, Team, User } from "@prisma/client"
 import { format } from 'date-fns'
 import { sanitizeTime } from "../../lib/time"
 
 export default function AbsenceEmailTemplate(
   absence: Absence, 
   user: User, 
+  team: Team,
   absenceType: AbsenceType) {
   const {
     title,
@@ -29,13 +30,13 @@ export default function AbsenceEmailTemplate(
         <Container style={container}>
           <Text style={heading}>New Absence Record!</Text>
           <Text style={paragraph}>
-            <strong>User:</strong> {user.name} <br />
-            <strong>Title:</strong> {title} <br />
-            <strong>Type:</strong> {absenceType.name} <br />
-            <strong>Description:</strong> {description} <br />
-            <strong>Starts At:</strong> {format(new Date(startDateAt.toISOString().slice(0, -1)), 'dd/MM/yyyy')} <br />
-            <strong>Ends At:</strong> {format(new Date(endDateAt.toISOString().slice(0, -1)), 'dd/MM/yyyy')} <br />
-            <strong>All Day Event:</strong> {isAllDay ? "Yes" : "No"} <br />
+            <strong>Team / User: </strong>{`${team.name}: ${user.name}`} <br />
+            <strong>Title: </strong>{title} <br />
+            <strong>Type: </strong>{absenceType.name} <br />
+            <strong>Description: </strong>{description} <br />
+            <strong>Starts At: </strong>{format(new Date(startDateAt.toISOString().slice(0, -1)), 'dd/MM/yyyy')} <br />
+            <strong>Ends At: </strong>{format(new Date(endDateAt.toISOString().slice(0, -1)), 'dd/MM/yyyy')} <br />
+            <strong>All Day Event: </strong>{isAllDay ? "Yes" : "No"} <br />
             {startTimeConverted &&
               <span><strong>Start Time At:</strong> {format(sanitizeTime(startTimeConverted), 'HH:mm')} <br /></span>
             }

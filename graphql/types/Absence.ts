@@ -147,7 +147,7 @@ builder.mutationField('createAbsence', (t) =>
         from: "tms-app@tms-app.com",
         to: manager?.email,
         subject: "[TMS] New Absence Record!",
-        html: render(AbsenceEmailTemplate(absence, user, absenceType)),
+        html: render(AbsenceEmailTemplate(absence, user, team, absenceType)),
       })
 
       return absence

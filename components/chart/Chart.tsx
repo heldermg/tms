@@ -18,9 +18,11 @@ interface ChartProps {
   title: string,
   labels: string[],
   datasets: ChartData[],
+  height?: number,
+  width?: number,
 }
 
-function Chart({ title, labels, datasets}: ChartProps) {
+function Chart({ title, labels, datasets, height = 500, width = 1000 }: ChartProps) {
 
   const data = {
     labels,
@@ -29,6 +31,7 @@ function Chart({ title, labels, datasets}: ChartProps) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top' as const,
@@ -43,7 +46,9 @@ function Chart({ title, labels, datasets}: ChartProps) {
   return (
     <Bar 
       options={options} 
-      data={data} 
+      data={data}
+      height={height}
+      width={width}
     />
   )
 }
