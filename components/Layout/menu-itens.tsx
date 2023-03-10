@@ -81,6 +81,19 @@ export const menuItems = [
   },
   {
     id: 7,
+    href: '/calendar',
+    title: 'Calendar',
+    icon: (
+      <SvgIcon
+        iconType="calendar-days"
+        title="Calendar"
+        desc="Calendar Button"
+        className="w-10 h-10"
+      />
+    ),
+  },
+  {
+    id: 8,
     href: '/absencesReport',
     title: 'Absences Report',
     icon: (

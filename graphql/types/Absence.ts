@@ -60,6 +60,43 @@ builder.queryField('absences', (t) =>
   })
 )
 
+builder.queryField('absencesByTeam', (t) =>
+  t.prismaConnection({
+    type: 'Absence',
+    cursor: 'id',
+    args: {
+      teamId: t.arg.string(),
+    },
+    resolve: async (query, _parent, args, _ctx, _info) => {
+      const { teamId } = args
+
+      if (!teamId) {
+        throw new GraphQLError(`Error! TeamId not provided!`)
+      }
+
+      const absenceById = await prisma.absence.findMany({
+        where: {
+          user: {
+            teamId
+          },
+          startDateAt: {
+            gte: new Date()
+          }
+        },
+        orderBy: [
+          {
+            startDateAt: 'desc',
+          },
+          {
+            endDateAt: 'desc',
+          }
+        ]
+      })
+      return absenceById
+    },
+  })
+)
+
 builder.mutationField('createAbsence', (t) =>
   t.prismaField({
     type: 'Absence',

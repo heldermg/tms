@@ -38,6 +38,31 @@ export const ABSENCE_QUERY = gql`
   }
 `
 
+export const ABSENCES_BY_TEAM_QUERY = gql`
+  query absencesByTeamQuery($first: Int, $after: String, $teamId: String) {
+    absencesByTeam(first: $first, after: $after, teamId: $teamId) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      edges {
+        cursor
+        node {
+          id
+          title
+          startDateAt
+          endDateAt
+          startTimeAt
+          endTimeAt
+          user {
+            name
+          }
+        }
+      }
+    }
+  }
+`
+
 export const ABSENCE_CREATE_MUTATION = gql`
   mutation createAbsence(
     $title: String!
