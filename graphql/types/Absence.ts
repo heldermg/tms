@@ -129,9 +129,9 @@ builder.mutationField('createAbsence', (t) =>
 
       const isAllDay: boolean = startTimeAt && endTimeAt ? false : true
 
-      if (newStartDateAt > newEndDateAt) {
+      /*if (newStartDateAt > newEndDateAt) {
         throw new GraphQLError(`Error! Start Date cannot be after the End Date.`)
-      }
+      }*/
 
       if (newStartTimeAt && newEndTimeAt && newStartTimeAt >= newEndTimeAt) {
         throw new GraphQLError(`Error! Start Time cannot be equal or after the End Time.`)

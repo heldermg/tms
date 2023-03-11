@@ -11,38 +11,6 @@ import { sanitizeTime } from '../../lib/time'
 moment.locale('pt-BR')
 const localizer = momentLocalizer(moment)
 
-const events = [
-  {
-    id: 0,
-    title: 'Board meeting',
-    start: new Date(2023, 2, 9),
-    end: new Date(2023, 2, 9),
-    resourceId: 1,
-  },
-  {
-    id: 1,
-    title: 'MS training',
-    allDay: true,
-    start: new Date(2018, 0, 29, 14, 0, 0),
-    end: new Date(2018, 0, 29, 16, 30, 0),
-    resourceId: 2,
-  },
-  {
-    id: 2,
-    title: 'Team lead meeting',
-    start: new Date(2018, 0, 29, 8, 30, 0),
-    end: new Date(2018, 0, 29, 12, 30, 0),
-    resourceId: 3,
-  },
-  {
-    id: 11,
-    title: 'Birthday Party',
-    start: new Date(2018, 0, 30, 7, 0, 0),
-    end: new Date(2018, 0, 30, 10, 30, 0),
-    resourceId: 4,
-  },
-]
-
 const resourceMap = [
   { resourceId: 1, resourceTitle: 'Absences' },
 ]
@@ -89,14 +57,14 @@ interface CalendarProps {
 export default function Calendar({ absences }: CalendarProps) {
   console.log(absences)
 
-  const events2 = getCalendarEventsByAbsences(absences)
+  const events = getCalendarEventsByAbsences(absences)
 
   return (
     <div style={styles.container}>
       <BigCalendar
         selectable
         localizer={localizer}
-        events={events2}
+        events={events}
         defaultView={Views.WEEK}
         views={[Views.DAY, Views.WEEK, Views.MONTH]}
         defaultDate={new Date()}
