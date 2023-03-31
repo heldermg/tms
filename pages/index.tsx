@@ -21,7 +21,7 @@ function Home() {
               </ul>
             </li>
             <li>
-              <strong>- SP2 - Sprint 2 <em>(Under Construction)</em></strong>
+              <strong>- SP2 - Sprint 2</strong>
               <ul className='m-5'>
                 <li>- Users Registration</li>
                 <li>- Absences Types Registration</li>
@@ -31,6 +31,7 @@ function Home() {
             <li>
             <strong>- SP3 - Sprint 3</strong>
               <ul className='m-5'>
+                <li>- Calendar</li>
                 <li>- Events Notification</li>
                 <li>- Absences Report</li>
               </ul>

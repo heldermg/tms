@@ -29,19 +29,6 @@ export const menuItems = [
   },
   {
     id: 3,
-    href: '/teams',
-    title: 'Teams',
-    icon: (
-      <SvgIcon
-        iconType="user-group"
-        title="Teams"
-        desc="Teams Button"
-        className="w-10 h-10"
-      />
-    ),
-  },
-  {
-    id: 4,
     href: '/users',
     title: 'Users',
     icon: (
@@ -49,6 +36,19 @@ export const menuItems = [
         iconType="users"
         title="Users"
         desc="Users Button"
+        className="w-10 h-10"
+      />
+    ),
+  },
+  {
+    id: 4,
+    href: '/teams',
+    title: 'Teams',
+    icon: (
+      <SvgIcon
+        iconType="user-group"
+        title="Teams"
+        desc="Teams Button"
         className="w-10 h-10"
       />
     ),
