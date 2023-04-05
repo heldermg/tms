@@ -33,10 +33,10 @@ function getCalendarEventsByAbsences(absences: Absence[]) {
       const endTime = a.endTimeAt ? new Date(sanitizeTime(a.endTimeAt)) : null
 
       const startHours = startTime ? startTime.getHours() : 0
-      const endHours = endTime ? endTime.getHours() : 0
+      const endHours = endTime ? endTime.getHours() : 23
 
       const startMinutes = startTime ? startTime.getMinutes() : 0
-      const endMinutes = endTime ? endTime.getMinutes() : 0
+      const endMinutes = endTime ? endTime.getMinutes() : 59
 
       return {
         id: a.id,
