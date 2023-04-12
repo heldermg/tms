@@ -39,8 +39,10 @@ function getCalendarEventsByAbsences(absences: Absence[]) {
 
       } else {
         start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
-        end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+        end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59)
       }
+console.log(`start: ${start}`);
+console.log(`end: ${end}`);
 
       return {
         id: a.id,
