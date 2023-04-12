@@ -32,17 +32,21 @@ function getCalendarEventsByAbsences(absences: Absence[]) {
       const startTime = a.startTimeAt ? new Date(sanitizeTime(a.startTimeAt)) : null
       const endTime = a.endTimeAt ? new Date(sanitizeTime(a.endTimeAt)) : null
 
-      const startHours = startTime ? startTime.getHours() : 0
-      const endHours = endTime ? endTime.getHours() : 23
+      let start, end
+      if (startTime && endTime) {
+        start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startTime.getHours(), startTime.getMinutes(), 0)
+        end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), endTime.getHours(), endTime.getMinutes(), 0)
 
-      const startMinutes = startTime ? startTime.getMinutes() : 0
-      const endMinutes = endTime ? endTime.getMinutes() : 59
+      } else {
+        start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+        end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+      }
 
       return {
         id: a.id,
         title: a.user.name + ": " + a.title,
-        start: new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startHours, startMinutes, 0),
-        end: new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), endHours, endMinutes, 0),
+        start,
+        end,
         resourceId: 1,
       }
     })
@@ -55,8 +59,6 @@ interface CalendarProps {
 }
 
 export default function Calendar({ absences }: CalendarProps) {
-  console.log(absences)
-
   const events = getCalendarEventsByAbsences(absences)
 
   return (
