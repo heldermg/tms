@@ -74,13 +74,16 @@ builder.queryField('absencesByTeam', (t) =>
         throw new GraphQLError(`Error! TeamId not provided!`)
       }
 
+      let today = new Date()
+      today.setHours(0, 0, 0, 0)
+
       const absenceById = await prisma.absence.findMany({
         where: {
           user: {
             teamId
           },
           startDateAt: {
-            gte: new Date()
+            gte: today
           }
         },
         orderBy: [
