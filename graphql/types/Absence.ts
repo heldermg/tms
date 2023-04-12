@@ -82,9 +82,6 @@ builder.queryField('absencesByTeam', (t) =>
           user: {
             teamId
           },
-          startDateAt: {
-            gte: today
-          }
         },
         orderBy: [
           {
