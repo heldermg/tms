@@ -7,6 +7,7 @@ import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Absence } from '@prisma/client'
 import { sanitizeTime } from '../../lib/time'
+import TimeGutterHeader from './TimeGutterHeader'
 
 moment.locale('pt-BR')
 const localizer = momentLocalizer(moment)
@@ -32,18 +33,25 @@ function getCalendarEventsByAbsences(absences: Absence[]) {
       const startTime = a.startTimeAt ? new Date(sanitizeTime(a.startTimeAt)) : null
       const endTime = a.endTimeAt ? new Date(sanitizeTime(a.endTimeAt)) : null
 
-      const startHours = startTime ? startTime.getHours() : 0
-      const endHours = endTime ? endTime.getHours() : 0
+      let start, end
+      let allDay = false
+      if (startTime && endTime) {
+        start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startTime.getHours(), startTime.getMinutes(), 0)
+        end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), endTime.getHours(), endTime.getMinutes(), 0)
 
-      const startMinutes = startTime ? startTime.getMinutes() : 0
-      const endMinutes = endTime ? endTime.getMinutes() : 0
+      } else {
+        start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+        end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59)
+        allDay = true
+      }
 
       return {
         id: a.id,
         title: a.user.name + ": " + a.title,
-        start: new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startHours, startMinutes, 0),
-        end: new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), endHours, endMinutes, 0),
-        resourceId: 1,
+        start,
+        end,
+        allDay,
+        resourceId: 1, 
       }
     })
   }
@@ -54,19 +62,25 @@ interface CalendarProps {
   absences: Absence[]
 }
 
-export default function Calendar({ absences }: CalendarProps) {
-  console.log(absences)
 
+
+export default function Calendar({ absences }: CalendarProps) {
   const events = getCalendarEventsByAbsences(absences)
 
   return (
     <div style={styles.container}>
       <BigCalendar
+        formats={{
+          timeGutterFormat: "HH:mm"
+        }}
+        components={{
+          timeGutterHeader: TimeGutterHeader,
+        }}
         selectable
         localizer={localizer}
         events={events}
         defaultView={Views.WEEK}
-        views={[Views.DAY, Views.WEEK, Views.MONTH]}
+        views={[Views.DAY, Views.WEEK, Views.MONTH, Views.AGENDA]}
         defaultDate={new Date()}
         resources={resourceMap}
         resourceIdAccessor="resourceId"

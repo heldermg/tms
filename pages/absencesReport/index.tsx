@@ -79,7 +79,9 @@ function ChartReport() {
 
   useMemo(() => {
     const teams = dataTeams?.teams.edges.map(({ node }: { node: Team }) => node)
-    if (teams) {
+    if (teams && teams.length > 0) {
+      console.log(teams);
+      
       setTeamMembers(teams[0].membersCount)
       setTeamId(teams[0].id)
       getRolesByTeamId()

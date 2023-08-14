@@ -74,14 +74,14 @@ builder.queryField('absencesByTeam', (t) =>
         throw new GraphQLError(`Error! TeamId not provided!`)
       }
 
+      let today = new Date()
+      today.setHours(0, 0, 0, 0)
+
       const absenceById = await prisma.absence.findMany({
         where: {
           user: {
             teamId
           },
-          startDateAt: {
-            gte: new Date()
-          }
         },
         orderBy: [
           {
@@ -129,9 +129,14 @@ builder.mutationField('createAbsence', (t) =>
 
       const isAllDay: boolean = startTimeAt && endTimeAt ? false : true
 
-      /*if (newStartDateAt > newEndDateAt) {
+      console.log('###### create absence')
+      console.log(newStartDateAt)
+      console.log(newEndDateAt)
+      console.log((newStartDateAt > newEndDateAt))
+
+      if (newStartDateAt > newEndDateAt) {
         throw new GraphQLError(`Error! Start Date cannot be after the End Date.`)
-      }*/
+      }
 
       if (newStartTimeAt && newEndTimeAt && newStartTimeAt >= newEndTimeAt) {
         throw new GraphQLError(`Error! Start Time cannot be equal or after the End Time.`)
@@ -179,12 +184,14 @@ builder.mutationField('createAbsence', (t) =>
           id: absenceTypeId
         }
       })
+
+      const emailTitle = "New Absence Record!"
     
       sendEmail({
         from: "tms-app@tms-app.com",
         to: manager?.email,
-        subject: "[TMS] New Absence Record!",
-        html: render(AbsenceEmailTemplate(absence, user, team, absenceType)),
+        subject: `[TMS] ${emailTitle}`,
+        html: render(AbsenceEmailTemplate({ emailTitle, absence, user, team, absenceType })),
       })
 
       return absence
@@ -235,56 +242,58 @@ builder.mutationField('updateAbsence', (t) =>
       }
 
       const absence = await prisma.absence.update({
-         where: {
-           id,
-         },
-         data: {
-           title,
-           description,
-           startDateAt: newStartDateAt,
-           endDateAt: newEndDateAt,
-           startTimeAt: newStartTimeAt,
-           endTimeAt: newEndTimeAt,
-           isAllDay,
-           userId,
-           absenceTypeId,
-         },
-       })
+        where: {
+          id,
+        },
+        data: {
+          title,
+          description,
+          startDateAt: newStartDateAt,
+          endDateAt: newEndDateAt,
+          startTimeAt: newStartTimeAt,
+          endTimeAt: newEndTimeAt,
+          isAllDay,
+          userId,
+          absenceTypeId,
+        },
+      })
 
       const team = await prisma.team.findFirst({
-         where: {
-           members: {
-             some: {
-               id: userId
-             }
-           }
-         }
-       })
- 
-       const manager = await prisma.user.findUnique({
-         where: {
-           id: team?.managerId
-         }
-       })
- 
-       const user = await prisma.user.findUnique({
-         where: {
-           id: userId
-         }
-       })
- 
-       const absenceType = await prisma.absenceType.findUnique({
-         where: {
-           id: absenceTypeId
-         }
-       })
+        where: {
+          members: {
+            some: {
+              id: userId
+            }
+          }
+        }
+      })
 
+      const manager = await prisma.user.findUnique({
+        where: {
+          id: team?.managerId
+        }
+      })
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: userId
+        }
+      })
+
+      const absenceType = await prisma.absenceType.findUnique({
+        where: {
+          id: absenceTypeId
+        }
+      })
+
+      const emailTitle = "Absence Record Updated!"
+    
       sendEmail({
-         from: "tms-app@tms-app.com",
-         to: manager?.email,
-         subject: "[TMS] Absence Record Updated!",
-         html: render(AbsenceEmailTemplate(absence, user, team, absenceType)),
-       })
+        from: "tms-app@tms-app.com",
+        to: manager?.email,
+        subject: `[TMS] ${emailTitle}`,
+        html: render(AbsenceEmailTemplate({ emailTitle, absence, user, team, absenceType })),
+      })
 
       return absence
     },
