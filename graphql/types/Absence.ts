@@ -234,22 +234,59 @@ builder.mutationField('updateAbsence', (t) =>
         throw new GraphQLError(`Error! Start Time cannot be equal or after the End Time.`)
       }
 
-      return await prisma.absence.update({
-        where: {
-          id,
-        },
-        data: {
-          title,
-          description,
-          startDateAt: newStartDateAt,
-          endDateAt: newEndDateAt,
-          startTimeAt: newStartTimeAt,
-          endTimeAt: newEndTimeAt,
-          isAllDay,
-          userId,
-          absenceTypeId,
-        },
-      })
+      const absence = await prisma.absence.update({
+         where: {
+           id,
+         },
+         data: {
+           title,
+           description,
+           startDateAt: newStartDateAt,
+           endDateAt: newEndDateAt,
+           startTimeAt: newStartTimeAt,
+           endTimeAt: newEndTimeAt,
+           isAllDay,
+           userId,
+           absenceTypeId,
+         },
+       })
+
+      const team = await prisma.team.findFirst({
+         where: {
+           members: {
+             some: {
+               id: userId
+             }
+           }
+         }
+       })
+ 
+       const manager = await prisma.user.findUnique({
+         where: {
+           id: team?.managerId
+         }
+       })
+ 
+       const user = await prisma.user.findUnique({
+         where: {
+           id: userId
+         }
+       })
+ 
+       const absenceType = await prisma.absenceType.findUnique({
+         where: {
+           id: absenceTypeId
+         }
+       })
+
+      sendEmail({
+         from: "tms-app@tms-app.com",
+         to: manager?.email,
+         subject: "[TMS] Absence Record Updated!",
+         html: render(AbsenceEmailTemplate(absence, user, team, absenceType)),
+       })
+
+      return absence
     },
   })
 )
